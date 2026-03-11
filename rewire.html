@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Rewire">
+<title>Rewire</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@300;400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#f7f5f2; --bg2:#f0ede8; --surface:#ffffff; --border:#e5e0d8;
+    --border-light:#ede9e3; --text:#2c2825; --text-mid:#6b635a;
+    --text-dim:#a09890; --accent:#7c6f5e; --accent-warm:#c4956a;
+    --green:#5a8a6a; --amber:#b87d3e; --red:#b05252;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{font-size:16px}
+  body{background:var(--bg);color:var(--text);font-family:'Jost',sans-serif;font-weight:300;min-height:100vh;min-height:-webkit-fill-available;max-width:480px;margin:0 auto}
+  .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 20px 12px;display:flex;align-items:baseline;gap:10px;position:sticky;top:0;z-index:10}
+  .logo{font-family:'Libre Baskerville',serif;font-size:20px;letter-spacing:-.3px}
+  .logo em{font-style:italic;color:var(--accent-warm)}
+  .topbar-tag{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:1.5px;text-transform:uppercase}
+  .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--surface);border-top:1px solid var(--border);display:flex;padding-bottom:max(env(safe-area-inset-bottom),6px);z-index:10}
+  .nav-btn{flex:1;padding:9px 4px 6px;border:none;background:transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px}
+  .nav-icon{font-size:17px;line-height:1}
+  .nav-label{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.5px;text-transform:uppercase;color:var(--text-dim);transition:color .15s}
+  .nav-btn.active .nav-label{color:var(--accent-warm)}
+  .scroll-area{padding:18px 18px 110px}
+  .panel{display:none}
+  .panel.active{display:block;animation:rise .22s ease}
+  @keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+  .slabel{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin:22px 0 8px}
+  .slabel:first-child{margin-top:0}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px}
+  .card-title{font-family:'Libre Baskerville',serif;font-size:16px;margin-bottom:8px}
+  .body-text{font-size:13px;color:var(--text-mid);line-height:1.65}
+  .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+  .stat-tile{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px}
+  .stat-num{font-family:'Libre Baskerville',serif;font-size:28px;font-weight:700;line-height:1;margin-bottom:3px}
+  .stat-num.g{color:var(--green)} .stat-num.a{color:var(--amber)} .stat-num.w{color:var(--accent)} .stat-num.r{color:var(--accent-warm)}
+  .stat-lbl{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim)}
+  .prog-row{margin-bottom:12px}
+  .prog-row:last-of-type{margin-bottom:0}
+  .prog-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--text-mid);margin-bottom:5px}
+  .prog-meta span:last-child{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent-warm)}
+  .prog-track{height:3px;background:var(--bg2);border-radius:2px;overflow:hidden}
+  .prog-fill{height:100%;border-radius:2px;transition:width 1s ease;background:var(--accent-warm)}
+  .prog-fill.g{background:var(--green)} .prog-fill.a{background:var(--amber)}
+  .phase-badge{display:inline-flex;align-items:center;gap:7px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:10px;width:100%}
+  .phase-dot{width:8px;height:8px;border-radius:50%;background:var(--accent-warm);flex-shrink:0}
+  .phase-dot.green{background:var(--green)} .phase-dot.amber{background:var(--amber)}
+  .phase-name{font-family:'Libre Baskerville',serif;font-size:13px}
+  .phase-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:.5px;text-transform:uppercase;margin-top:1px}
+  .insight-text{font-family:'Libre Baskerville',serif;font-size:14px;font-style:italic;color:var(--text-mid);line-height:1.7}
+  .brain-msg{font-size:12px;color:var(--text-mid);line-height:1.6;margin-top:10px;padding-top:10px;border-top:1px solid var(--border-light)}
+  .illusion-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px;cursor:pointer}
+  .illusion-card:active{border-color:var(--accent-warm)}
+  .illusion-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .illusion-q{font-family:'Libre Baskerville',serif;font-size:14px;font-style:italic;color:var(--text-mid);margin-bottom:3px}
+  .illusion-title{font-size:12px;font-weight:500;color:var(--accent)}
+  .illusion-chevron{font-size:11px;color:var(--text-dim);flex-shrink:0;margin-top:2px}
+  .illusion-body{font-size:13px;color:var(--text-mid);line-height:1.65;margin-top:10px;display:none}
+  .illusion-body.open{display:block}
+  .quote-block{border-left:3px solid var(--accent-warm);padding:10px 14px;background:#fdf8f4;border-radius:0 8px 8px 0;margin-bottom:10px}
+  .quote-text{font-family:'Libre Baskerville',serif;font-style:italic;font-size:13px;color:var(--text-mid);line-height:1.65}
+  .quote-src{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-dim);margin-top:5px;text-transform:uppercase;letter-spacing:1px}
+  .smoke-prompt{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px}
+  .smoke-q{font-family:'Libre Baskerville',serif;font-size:15px;margin-bottom:10px}
+  .smoke-options{display:flex;flex-direction:column;gap:7px}
+  .smoke-opt{background:var(--bg2);border:1px solid var(--border-light);border-radius:8px;padding:11px 13px;font-size:13px;color:var(--text-mid);cursor:pointer;text-align:left;width:100%;font-family:'Jost',sans-serif;transition:all .15s}
+  .smoke-opt:active{background:var(--border)}
+  .smoke-result{display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border-light);font-size:13px;color:var(--text-mid);line-height:1.65;font-family:'Libre Baskerville',serif;font-style:italic}
+  .smoke-result.show{display:block}
+  .urge-btn{width:100%;padding:16px;background:#fdf0ed;border:1px solid #e8c4bb;border-radius:12px;color:var(--red);font-family:'Jost',sans-serif;font-size:15px;font-weight:400;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+  .urge-btn:active{background:#fae3de;transform:scale(.99)}
+  .timer-block{display:none;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px 16px;text-align:center;margin-bottom:10px}
+  .timer-block.active{display:block;animation:rise .25s ease}
+  .timer-circle{width:108px;height:108px;border-radius:50%;border:1px solid var(--border);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;position:relative;background:var(--bg2)}
+  .timer-circle svg{position:absolute;inset:-1px;width:calc(100% + 2px);height:calc(100% + 2px);transform:rotate(-90deg)}
+  .timer-circle svg circle{fill:none;stroke:var(--accent-warm);stroke-width:1.5;stroke-linecap:round;stroke-dasharray:339;stroke-dashoffset:0;transition:stroke-dashoffset 1s linear}
+  .timer-num{font-family:'Libre Baskerville',serif;font-size:30px;color:var(--text);line-height:1}
+  .timer-unit{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim)}
+  .timer-msg{font-size:13px;color:var(--text-mid);margin-bottom:12px;line-height:1.5}
+  .breath-ring{width:68px;height:68px;border-radius:50%;border:1px solid var(--border);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--text-dim);text-transform:uppercase;animation:breathe 4s ease-in-out infinite;background:var(--bg2)}
+  @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.1);border-color:var(--accent-warm);color:var(--accent-warm)}}
+  .timer-actions{display:flex;gap:8px;justify-content:center}
+  .tech-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .tech-card{background:var(--bg2);border:1px solid var(--border-light);border-radius:10px;padding:13px 11px;cursor:pointer;transition:all .15s}
+  .tech-card:active{background:var(--border);transform:scale(.98)}
+  .tech-icon{font-size:19px;margin-bottom:5px}
+  .tech-name{font-size:12px;font-weight:500;margin-bottom:2px;color:var(--text)}
+  .tech-desc{font-size:10px;color:var(--text-dim);line-height:1.4}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:8px;border:1px solid var(--border);cursor:pointer;font-family:'Jost',sans-serif;font-size:13px;font-weight:400;transition:all .15s;background:var(--surface);color:var(--text-mid)}
+  .btn:active{transform:scale(.98)}
+  .btn-fill{background:var(--text);color:var(--bg);border-color:var(--text)}
+  .btn-green{background:#eaf3ec;color:var(--green);border-color:#c6deca}
+  .btn-red{background:#fdf0ed;color:var(--red);border-color:#e8c4bb}
+  .fact-block{border-left:2px solid var(--border);padding-left:13px;margin-bottom:18px}
+  .fact-block:last-child{margin-bottom:0}
+  .fact-title{font-family:'Libre Baskerville',serif;font-size:14px;margin-bottom:5px}
+  .fact-body{font-size:13px;color:var(--text-mid);line-height:1.65}
+  label{display:block;font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim);margin-bottom:6px}
+  input,select,textarea{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:11px 13px;color:var(--text);font-family:'Jost',sans-serif;font-size:14px;font-weight:300;outline:none;transition:border-color .15s;-webkit-appearance:none;appearance:none}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent-warm);background:var(--surface)}
+  select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23a09890' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+  select option{background:white}
+  textarea{resize:none;min-height:85px;line-height:1.5}
+  .form-row{margin-bottom:13px}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:13px}
+  .j-entry{border-bottom:1px solid var(--border-light);padding:13px 0}
+  .j-entry:last-child{border-bottom:none}
+  .j-meta{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:5px}
+  .j-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:5px}
+  .tag{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 7px;border-radius:20px;letter-spacing:.5px;border:1px solid var(--border);color:var(--text-mid);background:var(--bg2)}
+  .j-text{font-size:13px;color:var(--text-mid);line-height:1.6}
+  .log-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border-light);font-size:12px;color:var(--text-mid)}
+  .log-row:last-child{border-bottom:none}
+  .log-dot{width:5px;height:5px;border-radius:50%;background:var(--red);flex-shrink:0}
+  .log-dot.ok{background:var(--green)}
+  .log-time{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-dim);min-width:44px}
+  .tl{padding-left:20px;position:relative}
+  .tl::before{content:'';position:absolute;left:4px;top:6px;bottom:6px;width:1px;background:var(--border)}
+  .tl-row{position:relative;margin-bottom:16px;opacity:.4}
+  .tl-row.done{opacity:1}
+  .tl-dot{position:absolute;left:-20px;top:5px;width:9px;height:9px;border-radius:50%;background:var(--bg);border:1.5px solid var(--border)}
+  .tl-row.done .tl-dot{background:var(--green);border-color:var(--green);box-shadow:0 0 0 3px rgba(90,138,106,.12)}
+  .tl-when{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--accent-warm);margin-bottom:2px}
+  .tl-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px}
+  .tl-body{font-size:12px;color:var(--text-mid);line-height:1.5}
+  .overlay{display:none;position:fixed;inset:0;background:rgba(44,40,37,.3);backdrop-filter:blur(3px);z-index:50;align-items:flex-end;justify-content:center}
+  .overlay.open{display:flex}
+  .sheet{background:var(--surface);border-radius:16px 16px 0 0;width:100%;max-width:480px;max-height:86vh;overflow-y:auto;padding:20px 18px max(env(safe-area-inset-bottom),28px);animation:slideUp .22s ease}
+  @keyframes slideUp{from{transform:translateY(36px);opacity:0}to{transform:translateY(0);opacity:1}}
+  .sheet-handle{width:32px;height:3px;background:var(--border);border-radius:2px;margin:0 auto 18px}
+  .sheet h3{font-family:'Libre Baskerville',serif;font-size:18px;margin-bottom:5px}
+  .s-badge{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--accent-warm);background:#fdf3eb;border:1px solid #f0d9c0;padding:3px 8px;border-radius:4px;display:inline-block;margin-bottom:12px}
+  .sheet p{font-size:13px;color:var(--text-mid);line-height:1.65;margin-bottom:12px}
+  .sheet-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim);margin-bottom:8px}
+  .step-item{display:flex;gap:10px;margin-bottom:10px;font-size:13px;color:var(--text-mid);line-height:1.55}
+  .step-n{width:19px;height:19px;border-radius:50%;background:var(--bg2);border:1px solid var(--border);font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-dim);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+  .empty{font-size:13px;color:var(--text-dim);padding:4px 0}
+  .rule-item{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--text-mid);margin-bottom:8px}
+  .rule-num{color:var(--accent-warm);font-size:15px;margin-top:-2px;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">Re<em>wire</em></div>
+  <div class="topbar-tag">Freedom from Smoking</div>
+</div>
+
+<div class="scroll-area">
+
+  <!-- TODAY -->
+  <div id="panel-dashboard" class="panel active">
+    <div id="phaseBlock" class="phase-badge">
+      <div class="phase-dot" id="phaseDot"></div>
+      <div>
+        <div class="phase-name" id="phaseName">Set up your profile to begin</div>
+        <div class="phase-sub" id="phaseSub">Setup → enter your details</div>
+      </div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-tile"><div class="stat-num g" id="statDays">0</div><div class="stat-lbl">Days free</div></div>
+      <div class="stat-tile"><div class="stat-num a" id="statCigs">0</div><div class="stat-lbl">Cigs avoided</div></div>
+      <div class="stat-tile"><div class="stat-num w" id="statMoney">£0</div><div class="stat-lbl">Saved</div></div>
+      <div class="stat-tile"><div class="stat-num r" id="statUrges">0</div><div class="stat-lbl">Urges defeated</div></div>
+    </div>
+    <div class="card">
+      <div class="slabel" style="margin-top:0">Brain rewiring</div>
+      <div class="prog-row"><div class="prog-meta"><span>Reward pathway</span><span id="rewardPct">0%</span></div><div class="prog-track"><div class="prog-fill" id="rewardBar" style="width:0%"></div></div></div>
+      <div class="prog-row"><div class="prog-meta"><span>Self-regulation</span><span id="pfcPct">0%</span></div><div class="prog-track"><div class="prog-fill g" id="pfcBar" style="width:0%"></div></div></div>
+      <div class="prog-row"><div class="prog-meta"><span>Receptor normalization</span><span id="recPct">0%</span></div><div class="prog-track"><div class="prog-fill a" id="recBar" style="width:0%"></div></div></div>
+      <div class="brain-msg" id="brainMsg">Enter your quit date in Setup to start tracking.</div>
+    </div>
+    <div class="card">
+      <div class="slabel" style="margin-top:0">Today's insight</div>
+      <div class="insight-text" id="dailyInsight">Loading…</div>
+    </div>
+    <div class="card">
+      <div class="slabel" style="margin-top:0">Craving log</div>
+      <div id="cravingLog"><div class="empty">No cravings logged yet.</div></div>
+    </div>
+  </div>
+
+  <!-- EASYWAY -->
+  <div id="panel-easyway" class="panel">
+    <div class="card">
+      <div class="card-title">The Easyway Method</div>
+      <div class="body-text">Most methods treat smoking as a pleasure you're sacrificing — creating deprivation that drives you back. Allen Carr's Easyway works differently: it dissolves the <em>illusions</em> that make you think smoking does something for you. When those illusions are gone, the desire to smoke simply disappears. No willpower. No white-knuckling. No substitutes.</div>
+    </div>
+
+    <div class="quote-block">
+      <div class="quote-text">Smoking merely relieves the withdrawal caused by the previous cigarette. Every cigarette creates the very problem it appears to solve. When you truly understand this, the desire to smoke disappears — you are not giving anything up.</div>
+      <div class="quote-src">Allen Carr's Easyway principle</div>
+    </div>
+
+    <div class="slabel">While you read this section</div>
+    <div class="card">
+      <div class="body-text" style="margin-bottom:12px">Keep smoking as normal while you work through these ideas. Do not try to cut down — that makes each cigarette feel more valuable. The goal is to change how you <em>think</em> about smoking. Quitting happens naturally when the illusions are fully dismantled.</div>
+      <div class="rule-item"><span class="rule-num">①</span><span>Keep smoking normally — do not cut down yet</span></div>
+      <div class="rule-item"><span class="rule-num">②</span><span>Read each illusion with genuine curiosity</span></div>
+      <div class="rule-item"><span class="rule-num">③</span><span>While you smoke, honestly ask: what is this actually giving me?</span></div>
+      <div class="rule-item" style="margin-bottom:0"><span class="rule-num">④</span><span>Insight is the mechanism — not willpower</span></div>
+    </div>
+
+    <div class="slabel">The illusions — tap each to reveal the truth</div>
+
+    <div class="illusion-card" onclick="toggleIllusion(this)">
+      <div class="illusion-head"><div><div class="illusion-q">"Smoking relaxes me."</div><div class="illusion-title">The Relaxation Illusion</div></div><div class="illusion-chevron">▾</div></div>
+      <div class="illusion-body">Nicotine is a stimulant, not a relaxant. What feels like relaxation is the relief of the tension and anxiety that nicotine <em>itself</em> caused. A non-smoker is already in the calm state you're trying to reach. When you smoke you temporarily return to baseline — then the drug wears off and the anxiety builds again until the next cigarette. The cigarette created the very problem it appears to solve.</div>
+    </div>
+
+    <div class="illusion-card" onclick="toggleIllusion(this)">
+      <div class="illusion-head"><div><div class="illusion-q">"I enjoy it. It's a genuine pleasure."</div><div class="illusion-title">The Pleasure Illusion</div></div><div class="illusion-chevron">▾</div></div>
+      <div class="illusion-body">Your first cigarette tasted awful. The "pleasure" you feel now is entirely manufactured by the addiction — it's the brief relief of silencing the craving the addiction created. Like wearing tight shoes all day for the pleasure of taking them off. You're not experiencing pleasure; you're experiencing relief from a discomfort you chose to create. Remove the addiction, and the "pleasure" has nothing to stand on.</div>
+    </div>
+
+    <div class="illusion-card" onclick="toggleIllusion(this)">
+      <div class="illusion-head"><div><div class="illusion-q">"It helps me concentrate / think."</div><div class="illusion-title">The Focus Illusion</div></div><div class="illusion-chevron">▾</div></div>
+      <div class="illusion-body">Nicotine withdrawal causes restlessness and foggy thinking. A cigarette relieves that withdrawal, restoring the mental clarity you had before the last cigarette wore off. You're not enhancing your concentration — you're restoring it to the level a non-smoker maintains continuously, without any chemical aid at all.</div>
+    </div>
+
+    <div class="illusion-card" onclick="toggleIllusion(this)">
+      <div class="illusion-head"><div><div class="illusion-q">"Quitting will make me miserable / anxious."</div><div class="illusion-title">The Withdrawal Fear Illusion</div></div><div class="illusion-chevron">▾</div></div>
+      <div class="illusion-body">The physical withdrawal from nicotine is genuinely mild — a faint, slightly uncomfortable feeling that fades within days. What makes quitting feel unbearable is the <em>mental</em> belief that you're sacrificing something precious. Once you understand there is nothing real being given up — because cigarettes only provided what a non-smoker has naturally — the mental battle evaporates. You're not losing a crutch. You're removing a trap.</div>
+    </div>
+
+    <div class="illusion-card" onclick="toggleIllusion(this)">
+      <div class="illusion-head"><div><div class="illusion-q">"I'll gain weight when I quit."</div><div class="illusion-title">The Weight Illusion</div></div><div class="illusion-chevron">▾</div></div>
+      <div class="illusion-body">Weight gain happens when people substitute food for cigarettes — eating to fill a void they believe quitting created. If you quit without feeling deprived, there is no void to fill. Nicotine raises metabolism only marginally — look at the number of overweight smokers. Once free, your sense of taste improves, food becomes more satisfying in smaller amounts, and your capacity for exercise increases significantly. The fear of weight gain is itself part of the trap keeping you smoking.</div>
+    </div>
+
+    <div class="illusion-card" onclick="toggleIllusion(this)">
+      <div class="illusion-head"><div><div class="illusion-q">"Smoking is my stress relief."</div><div class="illusion-title">The Stress Relief Illusion</div></div><div class="illusion-chevron">▾</div></div>
+      <div class="illusion-body">Research consistently shows smokers have higher baseline anxiety than non-smokers. The "stress" that smoking relieves is largely nicotine withdrawal compounding ordinary life stress. Smoking creates a loop: stress → smoke → brief relief → more withdrawal anxiety → more stress → smoke again. Non-smokers face identical life pressures without needing a cigarette. Once free, you'll have one fewer source of anxiety — not one fewer tool to manage it.</div>
+    </div>
+
+    <div class="illusion-card" onclick="toggleIllusion(this)">
+      <div class="illusion-head"><div><div class="illusion-q">"I'm just an addictive person."</div><div class="illusion-title">The Identity Illusion</div></div><div class="illusion-chevron">▾</div></div>
+      <div class="illusion-body">Nicotine is one of the most physically addictive substances known. The vast majority of people who try it regularly become dependent. This says nothing about your character — it says everything about the drug. The neural pathways of addiction were built by the drug, not by a flaw in you. And just as they were built by repetition, they can be unmade through neuroplasticity. You are not an addict. You are a person who walked into a chemical trap that catches almost everyone.</div>
+    </div>
+
+    <div class="illusion-card" onclick="toggleIllusion(this)">
+      <div class="illusion-head"><div><div class="illusion-q">"I can't imagine socialising without it."</div><div class="illusion-title">The Social Prop Illusion</div></div><div class="illusion-chevron">▾</div></div>
+      <div class="illusion-body">You don't need a cigarette to socialise — billions of people do so without ever smoking. The discomfort of not smoking in a social situation is the discomfort of withdrawal, not a genuine social need. As a non-smoker, you won't have that withdrawal anxiety to begin with. Social situations will actually become more enjoyable — because you won't be distracted by planning your next cigarette or needing to step away from the group.</div>
+    </div>
+
+    <div class="slabel">Mindful smoking exercise</div>
+    <div class="smoke-prompt">
+      <div class="smoke-q">Before your next cigarette, ask yourself honestly:</div>
+      <div class="smoke-options">
+        <button class="smoke-opt" onclick="smokeAnswer('relax')">I want it to relax me</button>
+        <button class="smoke-opt" onclick="smokeAnswer('focus')">I need it to concentrate</button>
+        <button class="smoke-opt" onclick="smokeAnswer('enjoy')">I just enjoy it / the ritual</button>
+        <button class="smoke-opt" onclick="smokeAnswer('craving')">I feel restless / have a craving</button>
+        <button class="smoke-opt" onclick="smokeAnswer('habit')">Habit — I wasn't even thinking about it</button>
+        <button class="smoke-opt" onclick="smokeAnswer('social')">Social — others are smoking</button>
+      </div>
+      <div class="smoke-result" id="smokeResult"></div>
+    </div>
+
+    <div class="card">
+      <div class="body-text">Work through these illusions over days. There is no set timeline. When the illusions dissolve, something shifts: you stop seeing cigarettes as something you're giving up and start seeing the trap you're walking out of. Your last cigarette will feel like a release — not a loss.</div>
+    </div>
+  </div>
+
+  <!-- URGE BUSTER -->
+  <div id="panel-urge" class="panel">
+    <div class="card">
+      <div class="card-title">You're noticing a craving</div>
+      <div class="body-text" style="margin-bottom:6px">Good. Noticing it already puts you outside of it.</div>
+      <div class="body-text" style="margin-bottom:14px">This is your body adjusting — not suffering. The feeling has nothing to offer you. It will peak and dissolve within 90 seconds on its own. You don't need to fight it or resist it. Just watch it pass.</div>
+      <button class="urge-btn" id="urgeBtn" onclick="startTimer()">I'm ready to let this pass</button>
+    </div>
+
+    <div class="timer-block" id="timerBlock">
+      <div class="slabel" style="margin-top:0;text-align:center">Watching it pass</div>
+      <div class="timer-circle">
+        <svg viewBox="0 0 110 110"><circle cx="55" cy="55" r="54" id="timerRing"/></svg>
+        <div><div class="timer-num" id="timerNum">90</div><div class="timer-unit">sec</div></div>
+      </div>
+      <div class="timer-msg" id="timerMsg">Breathe gently. You're already free — this is just the old trap knocking.</div>
+      <div class="breath-ring" id="breathRing">inhale</div>
+      <div class="timer-actions">
+        <button class="btn btn-green" onclick="cravingDefeated()">It passed — I'm free</button>
+        <button class="btn" style="border-color:var(--border)" onclick="openSmokeSheet()">I still want to smoke</button>
+      </div>
+    </div>
+
+    <div class="slabel">Let it pass with</div>
+    <div class="card" style="padding:12px">
+      <div class="tech-grid">
+        <div class="tech-card" onclick="openTech('box')"><div class="tech-icon">🫧</div><div class="tech-name">Breathe</div><div class="tech-desc">Let your body settle into the calm that's already there</div></div>
+        <div class="tech-card" onclick="openTech('urge')"><div class="tech-icon">🌊</div><div class="tech-name">Watch it</div><div class="tech-desc">Observe with curiosity as the craving dissolves</div></div>
+        <div class="tech-card" onclick="openTech('reframe')"><div class="tech-icon">💡</div><div class="tech-name">See it clearly</div><div class="tech-desc">Remember what this feeling actually is</div></div>
+        <div class="tech-card" onclick="openTech('cold')"><div class="tech-icon">❄️</div><div class="tech-name">Reset</div><div class="tech-desc">Cold water to shift your state in seconds</div></div>
+        <div class="tech-card" onclick="openTech('move')"><div class="tech-icon">🏃</div><div class="tech-name">Move</div><div class="tech-desc">Let your body make its own feel-good</div></div>
+        <div class="tech-card" onclick="openTech('impl')"><div class="tech-icon">📌</div><div class="tech-name">Your plan</div><div class="tech-desc">The response you already decided on in advance</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCIENCE -->
+  <div id="panel-science" class="panel">
+    <div class="card">
+      <div class="card-title">Your Brain on Nicotine</div>
+      <div class="body-text">The Easyway dismantles the psychological trap. Neuroscience explains the biological one. Understanding both makes quitting feel logical rather than heroic.</div>
+    </div>
+    <div class="card">
+      <div class="fact-block"><div class="fact-title">The Dopamine Hijack</div><div class="fact-body">Nicotine floods the nucleus accumbens with dopamine via the ventral tegmental area. Over time the brain downregulates its own receptors — you need nicotine just to feel normal. Every "good" feeling from smoking is simply restoring what the addiction depleted.</div></div>
+      <div class="fact-block"><div class="fact-title">Neuroplasticity: Hebb's Law</div><div class="fact-body">Neurons that fire together wire together. The smoking habit is a neural highway built by repetition. It can be unpaved the same way — by not using it. Every resisted craving prunes this pathway and every new behaviour in its place strengthens an alternative.</div></div>
+      <div class="fact-block"><div class="fact-title">The 90-Second Wave</div><div class="fact-body">Dr. Jill Bolte Taylor found that the neurochemical loop of an emotional impulse — including cravings — lasts just 90 seconds if you don't feed it. Every surf completes the loop and weakens the signal.</div></div>
+      <div class="fact-block"><div class="fact-title">Receptor Normalization</div><div class="fact-body">Your brain grew extra nicotinic receptors in response to nicotine. They begin downregulating within 24 hours of quitting and are largely normalized in 6–12 weeks. After this, the biological craving mechanism is structurally deactivated.</div></div>
+      <div class="fact-block"><div class="fact-title">The Insula Cortex</div><div class="fact-body">The insula translates emotional states into bodily cravings. Patients with insula damage simply forget to want cigarettes. Mindfulness practice directly trains this region — with repetition, the craving signal weakens and eventually stops generating.</div></div>
+      <div class="fact-block"><div class="fact-title">Exercise & BDNF</div><div class="fact-body">Physical exercise releases Brain-Derived Neurotrophic Factor, literally growing new neurons. Even 10 minutes of aerobic movement reduces cravings by up to 40% and builds the new reward circuitry that replaces nicotine dependence.</div></div>
+      <div class="fact-block"><div class="fact-title">Sleep & Synaptic Pruning</div><div class="fact-body">Deep sleep is when your brain actively prunes weak connections — including the smoking circuit — and consolidates new strong ones. Every good night is active neurological rewiring.</div></div>
+    </div>
+  </div>
+
+  <!-- JOURNAL -->
+  <div id="panel-journal" class="panel">
+    <div class="card">
+      <div class="form-row"><label>Mood</label>
+        <select id="jMood"><option value="">Select…</option><option>💪 Strong & determined</option><option>😤 Fighting urges</option><option>😴 Tired / low energy</option><option>😰 Anxious / irritable</option><option>😊 Positive & hopeful</option><option>🌀 Foggy / unfocused</option><option>😔 Struggling today</option></select>
+      </div>
+      <div class="form-row"><label>Main trigger today</label>
+        <select id="jTrigger"><option value="">Select…</option><option>After coffee / meals</option><option>Stress / work</option><option>Socialising / alcohol</option><option>Boredom</option><option>Morning routine</option><option>Driving</option><option>Emotion (anger/sadness)</option><option>Seeing others smoke</option><option>No major triggers</option></select>
+      </div>
+      <div class="form-row"><label>Which illusion did you notice?</label>
+        <select id="jIllusion"><option value="">Select…</option><option>Relaxation illusion</option><option>Pleasure illusion</option><option>Focus illusion</option><option>Withdrawal fear</option><option>Weight illusion</option><option>Stress relief illusion</option><option>Identity illusion</option><option>Social prop illusion</option><option>None yet</option></select>
+      </div>
+      <div class="form-row"><label>Reflection</label>
+        <textarea id="jText" placeholder="What shifted today? What did you notice about your smoking?"></textarea>
+      </div>
+      <button class="btn btn-fill" onclick="saveEntry()" style="width:100%;justify-content:center">Save entry</button>
+    </div>
+    <div class="slabel">Past entries</div>
+    <div class="card"><div id="journalList"><div class="empty">No entries yet.</div></div></div>
+  </div>
+
+  <!-- RECOVERY -->
+  <div id="panel-recovery" class="panel">
+    <div class="card"><div class="card-title">Brain & Body Recovery</div><div class="body-text">Your body begins healing the moment you stop. Milestones you've passed glow green.</div></div>
+    <div class="card"><div class="tl" id="recoveryTl"></div></div>
+  </div>
+
+  <!-- SETUP -->
+  <div id="panel-setup" class="panel">
+    <div class="card">
+      <div class="card-title">Your profile</div>
+      <div class="form-grid">
+        <div><label>Quit date</label><input type="date" id="quitDate"></div>
+        <div><label>Cigs per day</label><input type="number" id="cigsPerDay" placeholder="e.g. 15" min="1"></div>
+        <div><label>Pack cost (£)</label><input type="number" id="packCost" placeholder="e.g. 14" step="0.01"></div>
+        <div><label>Cigs per pack</label><input type="number" id="cigsPerPack" placeholder="e.g. 20"></div>
+      </div>
+      <div class="form-row"><label>Primary motivation</label>
+        <select id="motivation"><option value="">Select…</option><option>Health & longevity</option><option>Family / children</option><option>Financial freedom</option><option>Athletic performance</option><option>Pregnancy</option><option>Self-identity (I am not a smoker)</option><option>Mental clarity</option></select>
+      </div>
+      <div class="form-row"><label>Your main triggers</label>
+        <textarea id="triggers" placeholder="After coffee, work stress, with drinks…"></textarea>
+      </div>
+      <div class="form-row"><label>When I feel a craving, I will immediately…</label>
+        <input type="text" id="intent" placeholder="e.g. take 10 deep breaths and walk outside">
+      </div>
+      <button class="btn btn-fill" onclick="saveSetup()" style="width:100%;justify-content:center;margin-top:4px">Save & start</button>
+    </div>
+    <div class="slabel">About this app</div>
+    <div class="card"><div class="body-text">Rewire combines two approaches. The <strong>Easyway</strong> (Allen Carr's method) dissolves the psychological illusions that make you want to smoke — no willpower, no NRT, no substitutes. <strong>Neuroplasticity science</strong> explains the biology of addiction and gives you tools to physically rewire the craving circuits. Together they address both the mental trap and the neural pathway.</div></div>
+  </div>
+
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" onclick="go('dashboard',this)"><span class="nav-icon">◎</span><span class="nav-label">Today</span></button>
+  <button class="nav-btn" onclick="go('easyway',this)"><span class="nav-icon">💡</span><span class="nav-label">Easyway</span></button>
+  <button class="nav-btn" onclick="go('urge',this)"><span class="nav-icon">🌊</span><span class="nav-label">Urge</span></button>
+  <button class="nav-btn" onclick="go('science',this)"><span class="nav-icon">🧠</span><span class="nav-label">Science</span></button>
+  <button class="nav-btn" onclick="go('journal',this)"><span class="nav-icon">✏️</span><span class="nav-label">Journal</span></button>
+  <button class="nav-btn" onclick="go('setup',this)"><span class="nav-icon">⚙</span><span class="nav-label">Setup</span></button>
+</nav>
+
+<!-- BOTTOM SHEET -->
+<div class="overlay" id="overlay" onclick="closeSheet(event)">
+  <div class="sheet" id="sheet">
+    <div class="sheet-handle"></div>
+    <div id="sheetContent"></div>
+    <div style="margin-top:14px"><button class="btn btn-fill" onclick="closeSheetDirect()" style="width:100%;justify-content:center">Done</button></div>
+  </div>
+</div>
+
+<script>
+let S={quitDate:null,cigsPerDay:20,packCost:14,cigsPerPack:20,motivation:'',triggers:'',intent:'',urgesDefeated:0,urgesLost:0,cravingLog:[],journalEntries:[]};
+const KEY='rewire-v3';
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function load(){try{const d=localStorage.getItem(KEY);if(d)S={...S,...JSON.parse(d)}}catch(e){}}
+
+function go(name,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  if(btn)btn.classList.add('active');
+  document.querySelector('.scroll-area').scrollTop=0;
+  if(name==='dashboard')refreshDash();
+  if(name==='recovery')renderRecovery();
+  if(name==='journal')renderJournal();
+}
+
+function saveSetup(){
+  const qd=document.getElementById('quitDate').value;
+  if(!qd){alert('Please enter your quit date.');return}
+  S.quitDate=qd;
+  S.cigsPerDay=parseFloat(document.getElementById('cigsPerDay').value)||20;
+  S.packCost=parseFloat(document.getElementById('packCost').value)||14;
+  S.cigsPerPack=parseFloat(document.getElementById('cigsPerPack').value)||20;
+  S.motivation=document.getElementById('motivation').value;
+  S.triggers=document.getElementById('triggers').value;
+  S.intent=document.getElementById('intent').value;
+  save();go('dashboard',document.querySelector('.nav-btn'));
+}
+
+function loadSetupForm(){
+  if(S.quitDate)document.getElementById('quitDate').value=S.quitDate;
+  document.getElementById('cigsPerDay').value=S.cigsPerDay||'';
+  document.getElementById('packCost').value=S.packCost||'';
+  document.getElementById('cigsPerPack').value=S.cigsPerPack||'';
+  if(S.motivation)document.getElementById('motivation').value=S.motivation;
+  if(S.triggers)document.getElementById('triggers').value=S.triggers;
+  if(S.intent)document.getElementById('intent').value=S.intent;
+}
+
+function days(){if(!S.quitDate)return 0;return Math.max(0,Math.floor((Date.now()-new Date(S.quitDate))/86400000))}
+
+function getPhase(d){
+  if(!S.quitDate)return{name:'Not started',sub:'Set quit date in Setup',dot:''};
+  if(d===0)return{name:'Day One',sub:'The first hours — stay curious',dot:'amber'};
+  if(d<=3)return{name:'Acute withdrawal',sub:'Days 1–3: peak intensity',dot:'amber'};
+  if(d<=7)return{name:'Clearing the fog',sub:'Days 4–7: stabilising',dot:'amber'};
+  if(d<=14)return{name:'Rewiring underway',sub:'Week 2: pathways weakening',dot:''};
+  if(d<=30)return{name:'Building momentum',sub:'Weeks 2–4: new normal forming',dot:''};
+  if(d<=90)return{name:'Deep rewiring',sub:'Month 1–3: receptor normalization',dot:''};
+  return{name:'Free',sub:'Receptors normalized. You rewired your brain.',dot:'green'};
+}
+
+function refreshDash(){
+  const d=days();
+  document.getElementById('statDays').textContent=d;
+  const ca=d*S.cigsPerDay;
+  document.getElementById('statCigs').textContent=ca;
+  document.getElementById('statMoney').textContent='£'+((ca/S.cigsPerPack)*S.packCost).toFixed(0);
+  document.getElementById('statUrges').textContent=S.urgesDefeated;
+  const ph=getPhase(d);
+  document.getElementById('phaseName').textContent=ph.name;
+  document.getElementById('phaseSub').textContent=ph.sub;
+  const dot=document.getElementById('phaseDot');
+  dot.className='phase-dot'+(ph.dot?' '+ph.dot:'');
+  const rp=Math.min(100,Math.round(d/90*100));
+  const tot=S.urgesDefeated+S.urgesLost;
+  const pp=tot>0?Math.min(100,Math.round(S.urgesDefeated/tot*100)):0;
+  const np=Math.min(100,Math.round(Math.min(d,84)/84*100));
+  document.getElementById('rewardPct').textContent=rp+'%';
+  document.getElementById('pfcPct').textContent=pp+'%';
+  document.getElementById('recPct').textContent=np+'%';
+  setTimeout(()=>{document.getElementById('rewardBar').style.width=rp+'%';document.getElementById('pfcBar').style.width=pp+'%';document.getElementById('recBar').style.width=np+'%'},80);
+  const msgs=[[90,'Nicotinic receptors fully normalized. The biological craving mechanism is deactivated.'],[60,'Two months. New reward pathways consolidated. The old circuit is functionally gone.'],[30,'One month. Receptor normalization ~50% complete. Cravings becoming infrequent.'],[14,'Two weeks. The smoking neural highway is losing traffic rapidly.'],[7,'One week. Prefrontal cortex strengthening. Habit loop weakening from disuse.'],[3,'Peak withdrawal is behind you. Reward system recalibrating to baseline.'],[1,'Day one complete. Receptor downregulation has begun. Rewiring started.'],[0,'Enter your quit date in Setup to track your brain\'s recovery.']];
+  document.getElementById('brainMsg').textContent=msgs.find(([n])=>d>=n)[1];
+  const ins=['Every craving you observe without acting on is a vote for a different version of yourself. Neurons that fire together wire together — you\'re redirecting traffic.','Notice how the craving had a beginning, middle and end — without a cigarette. Your insula is learning that the signal doesn\'t require a response.','The "relief" you felt from past cigarettes was never relaxation — it was temporary relief of anxiety the previous cigarette created. You\'re ahead of that loop now.','Dopamine baseline rises roughly 15% after two weeks without nicotine. Natural pleasures will feel noticeably more rewarding as your receptors recover.','The anterior cingulate cortex gets physically thicker with every act of self-regulation. You are building a stronger brain, one resisted craving at a time.','Withdrawal symptoms are your brain recalibrating. They are not suffering — they are the sound of repair.','The illusion of smoking as pleasure is dismantled by simple observation: the first cigarette ever tasted awful. All the "pleasure" was built by the addiction itself.','Sleep tonight prunes the smoking synaptic pathway and consolidates new circuits. Every good night\'s sleep is active neurological renovation.','The insula is relearning: craving sensation ≠ must smoke. Each time you observe without acting, this rewrite happens at the cellular level.','If-then planning pre-engages the prefrontal cortex so it intercepts the habit loop before it fires. Make yours specific and vivid.'];
+  document.getElementById('dailyInsight').textContent=ins[d%ins.length];
+  renderCravingLog();
+}
+
+function renderCravingLog(){
+  const el=document.getElementById('cravingLog');
+  if(!S.cravingLog.length){el.innerHTML='<div class="empty">No cravings logged yet.</div>';return}
+  el.innerHTML=S.cravingLog.slice(-8).reverse().map(e=>`
+    <div class="log-row">
+      <div class="log-dot ${e.ok?'ok':''}"></div>
+      <span class="log-time">${e.t}</span>
+      <span style="flex:1">${e.ok?'Passed':'Smoked'}${e.reason?' <span style="color:var(--text-dim);font-size:11px">· '+e.reason+'</span>':''}</span>
+    </div>`).join('');
+}
+
+function toggleIllusion(card){
+  const body=card.querySelector('.illusion-body');
+  const chev=card.querySelector('.illusion-chevron');
+  const open=body.classList.toggle('open');
+  chev.textContent=open?'▴':'▾';
+}
+
+const SA={
+  relax:'You want to feel relaxed — but nicotine is a stimulant. What you\'re about to experience as "relaxation" is simply the relief of the tension the previous cigarette caused. A non-smoker is already in the state you\'re trying to reach.',
+  focus:'Nicotine withdrawal causes restlessness and fuzzy thinking. Lighting up will restore the clarity you had before the last cigarette wore off — not improve it beyond baseline. A non-smoker maintains this clarity continuously without any chemical aid.',
+  enjoy:'Notice as you smoke: does it actually taste good? Or does the pleasure fade almost immediately, leaving you waiting for the next one? The enjoyment is the anticipation — and the relief of withdrawal — not the cigarette itself.',
+  craving:'What you\'re feeling is mild nicotine withdrawal — a slight physical unease amplified into urgency by years of conditioning. This exact sensation will pass in 90 seconds whether you smoke or not.',
+  habit:'This is the most revealing answer. You weren\'t consciously wanting a cigarette — the habit loop fired automatically. Cue → craving → smoke, without awareness. This loop can be interrupted simply by noticing it — which you just did.',
+  social:'You\'ll have the cigarette and feel part of something. But ask honestly: are you smoking because you want to, or because not smoking feels awkward? That discomfort is withdrawal anxiety layered onto a social situation — not a genuine social need.'
+};
+function smokeAnswer(key){const r=document.getElementById('smokeResult');r.textContent=SA[key];r.classList.add('show')}
+
+let timerInt=null,breathTO=null,timerCount=90;
+const CIRC=339,bP=['inhale','hold','exhale','hold'],bD=[4000,2000,4000,2000];
+
+function startTimer(){
+  document.getElementById('timerBlock').classList.add('active');
+  document.getElementById('urgeBtn').style.display='none';
+  timerCount=90;
+  document.getElementById('timerNum').textContent=90;
+  document.getElementById('timerMsg').textContent='Breathe gently. You\'re already free — this is just the old trap knocking.';
+  document.getElementById('timerRing').style.strokeDashoffset=0;
+  if(timerInt)clearInterval(timerInt);
+  timerInt=setInterval(()=>{
+    timerCount--;
+    document.getElementById('timerNum').textContent=Math.max(0,timerCount);
+    document.getElementById('timerRing').style.strokeDashoffset=CIRC*(1-timerCount/90);
+    if(timerCount<=60)document.getElementById('timerMsg').textContent='It\'s already fading. This is what passing feels like.';
+    if(timerCount<=30)document.getElementById('timerMsg').textContent='Almost gone. Notice how it was never as powerful as it seemed.';
+    if(timerCount<=10)document.getElementById('timerMsg').textContent='Nearly there. You\'ve done this.';
+    if(timerCount<=0){clearInterval(timerInt);document.getElementById('timerMsg').textContent='It\'s gone. It always was going to.';document.getElementById('timerNum').textContent='✓'}
+  },1000);
+  runBreath(0);
+}
+
+function runBreath(p){document.getElementById('breathRing').textContent=bP[p%4];breathTO=setTimeout(()=>runBreath(p+1),bD[p%4])}
+
+function stopTimer(){clearInterval(timerInt);clearTimeout(breathTO);document.getElementById('timerBlock').classList.remove('active');document.getElementById('urgeBtn').style.display=''}
+
+function cravingDefeated(){
+  S.urgesDefeated++;S.cravingLog.push({t:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),ok:true});
+  save();stopTimer();refreshDash();
+  alert('That feeling had nothing to give you — and it passed, just as it always will. You didn\'t resist it. You just saw it for what it was.');
+}
+
+// ── ILLUSION REFLECTION BEFORE LOGGING A CIGARETTE ──
+const SMOKE_REASONS=[
+  {key:'relax',  label:'I want to relax / de-stress'},
+  {key:'focus',  label:'I need to concentrate'},
+  {key:'enjoy',  label:'I just enjoy it / the ritual'},
+  {key:'craving',label:'I feel a craving / restless'},
+  {key:'habit',  label:'Habit — I wasn\'t even thinking about it'},
+  {key:'social', label:'Social — others are smoking'},
+  {key:'emotion',label:'Emotion — anxious, upset, or bored'},
+];
+
+const SMOKE_TRUTHS={
+  relax:  'The relaxation you\'re looking for already exists in you — cigarettes can\'t provide it, they only briefly relieve the tension they created. A non-smoker sitting beside you right now is more relaxed than you are at baseline, without doing anything at all.',
+  focus:  'The restlessness making it hard to concentrate is nicotine withdrawal. Smoking will restore the focus you had before the last cigarette wore off — not improve it. A non-smoker has that clarity continuously, for free, without a cigarette.',
+  enjoy:  'As you smoke it, notice honestly: does it actually taste good? Or does the enjoyment fade within the first few seconds, leaving you just waiting for it to end? The pleasure was in the anticipation — the relief of scratching the itch the addiction created.',
+  craving:'This exact feeling will pass within 90 seconds whether you smoke or not. It is mild withdrawal, amplified into urgency by years of conditioning. Not a need. Not an emergency. Just a signal that is already fading.',
+  habit:  'You weren\'t even consciously wanting this — the habit loop fired on its own. That moment of noticing is already a break in the loop. The loop can only run unobserved. You just observed it.',
+  social: 'The discomfort of not smoking right now is withdrawal anxiety sitting inside a social moment — not a social need. Every non-smoker at this gathering is having a fine time without one. You will too, and you\'ll be fully present for it.',
+  emotion:'The feeling you\'re trying to escape won\'t be resolved by a cigarette — it will be briefly masked, then return alongside fresh withdrawal anxiety. The emotion and the craving are two separate things. One of them will pass in 90 seconds on its own.'
+};
+
+function openSmokeSheet(){
+  clearInterval(timerInt);clearTimeout(breathTO);
+  const opts=SMOKE_REASONS.map(r=>`<button class="smoke-opt" onclick="smokeReflect('${r.key}','${r.label.replace(/'/g,"\\'")}')">${r.label}</button>`).join('');
+  document.getElementById('sheetContent').innerHTML=`
+    <h3 style="margin-bottom:6px">Before you light up</h3>
+    <p style="font-size:13px;color:var(--text-mid);line-height:1.6;margin-bottom:14px">Be honest with yourself. Why do you want this cigarette?</p>
+    <div style="display:flex;flex-direction:column;gap:7px" id="smokeReasonOpts">${opts}</div>
+    <div id="smokeReflectResult" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border-light);font-family:'Libre Baskerville',serif;font-style:italic;font-size:13px;color:var(--text-mid);line-height:1.65"></div>
+    <div id="smokeConfirmRow" style="display:none;margin-top:14px">
+      <p style="font-size:12px;color:var(--text-dim);margin-bottom:10px">You\'ve seen what this craving actually is. Your choice.</p>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-green" style="flex:1;justify-content:center" onclick="smokeCancelled()">I\'ll let it pass</button>
+        <button class="btn" style="flex:1;justify-content:center;border-color:var(--border)" onclick="smokeConfirmed()">I\'ll smoke anyway</button>
+      </div>
+    </div>`;
+  document.getElementById('overlay').classList.add('open');
+}
+
+function smokeReflect(key, label){
+  document.getElementById('overlay').dataset.reason=label;
+  document.getElementById('smokeReflectResult').textContent=SMOKE_TRUTHS[key];
+  document.getElementById('smokeReflectResult').style.display='block';
+  document.getElementById('smokeConfirmRow').style.display='block';
+  document.querySelectorAll('#smokeReasonOpts .smoke-opt').forEach(b=>{
+    const match=b.textContent.trim()===label;
+    b.style.opacity=match?'1':'0.35';
+    b.style.pointerEvents='none';
+  });
+}
+
+function smokeCancelled(){
+  closeSheetDirect();
+  S.urgesDefeated++;
+  S.cravingLog.push({t:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),ok:true,reason:document.getElementById('overlay').dataset.reason||''});
+  save();stopTimer();refreshDash();
+  alert('You saw the illusion clearly — and chose differently. That\'s not willpower. That\'s understanding.');
+}
+
+function smokeConfirmed(){
+  closeSheetDirect();
+  S.urgesLost++;
+  S.cravingLog.push({t:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),ok:false,reason:document.getElementById('overlay').dataset.reason||''});
+  save();stopTimer();refreshDash();
+  alert('Noted — no judgement. As you smoke, just notice honestly: was it what you expected? The gap between expectation and reality is where the illusion lives.');
+}
+
+const TECH={
+  box:{name:'🫧 Breathe',badge:'Let your body settle',
+    intro:'The relaxation you were looking for from cigarettes already lives in your own breath. You never needed nicotine for this. Box breathing activates your parasympathetic nervous system — returning you to a calm that was always yours to access.',
+    steps:['Sit or stand comfortably. Drop your shoulders. You are safe.','Exhale everything out through your mouth — let it all go.','Inhale slowly through your nose for a count of 4. Feel your chest open.','Hold gently for a count of 4. Notice the stillness.','Exhale through your mouth for a count of 4. Release completely.','Hold with empty lungs for a count of 4. Rest here.','Repeat 4–6 cycles. By cycle 3, most cravings have already dissolved — because they were never as powerful as they seemed.']},
+  urge:{name:'🌊 Watch it',badge:'Curiosity, not combat',
+    intro:'You don\'t need to fight this feeling — fighting gives it power. Instead, simply watch it. A craving watched with curiosity is a craving that has already lost its grip. Every time you observe without acting, you are literally rewriting the neural connection between this sensation and cigarettes.',
+    steps:['Rather than bracing against the craving, get curious about it. What does it actually feel like?','Notice where in your body it lives. Chest? Throat? Hands? Just observe — like a scientist, not a victim.','Give it a number, 1 to 10. Watch the number.','Now watch it change. It will shift — up, down, sideways — because it\'s not solid. It never was.','You\'re not in a battle. You\'re watching a feeling that has a beginning, middle, and end.','Notice the end arriving. It always does.','That\'s it. You watched it pass. Your brain just learned: this feeling doesn\'t require a cigarette.']},
+  reframe:{name:'💡 See it clearly',badge:'The truth about this moment',
+    intro:'The craving feels urgent because your brain was trained to treat it that way. But seen clearly, it\'s just a mild, temporary withdrawal signal — one that a non-smoker never experiences at all, because they never created it. Saying this out loud activates the rational cortex and loosens the feeling\'s grip almost immediately.',
+    steps:['Say this, out loud if you can: "This is my body adjusting. It is not a need."','Then: "A non-smoker never feels this. Cigarettes created this feeling — they cannot cure it."','If you know what triggered the craving, name the illusion: "I thought I needed this to relax — but nicotine created the tension. I was already calm before I started smoking."','Say something true and forward-looking: "Every time this passes, I become more free."','Close with this: "I\'m not giving anything up. I\'m walking out of a trap."','Let the statement settle. Notice what shifts.']},
+  cold:{name:'❄️ Reset',badge:'A clean break in the moment',
+    intro:'Cold water creates an immediate physiological shift — triggering norepinephrine that clears the craving signal quickly and cleanly. Think of it as a full-body refresh: a pause that breaks the automatic loop before it can complete itself.',
+    steps:['Go to a tap. Run it cold.','Hold your wrists under the cold water for 30 seconds. Feel yourself arrive in the present moment.','Or splash cold water on your face. Notice how completely your attention shifts.','Drink a large, slow glass of cold water. Let it be deliberate — this is a small act of care for yourself.','Stand still for a moment afterwards. The craving will have softened or passed entirely.','This works not because it distracts you — but because it gives your nervous system something real to respond to.']},
+  move:{name:'🏃 Move',badge:'Your body\'s own feel-good',
+    intro:'Your body can produce its own reward — endorphins, dopamine, serotonin — without any external substance at all. Two minutes of movement releases enough of these to shift your mood and dissolve the craving. This is not a substitute for cigarettes. This is what your natural reward system was designed to do.',
+    steps:['Stand up right now. That\'s the first move.','Do something that raises your heart rate: 20 jumping jacks, 10 push-ups, a brisk walk up the stairs, running on the spot.','As you move, notice your breath and your body — not the craving.','By the time you stop, the craving will have peaked and be fading. They always do within 90 seconds.','Notice how you feel. This is your body\'s own chemistry — available any time, free forever.','Over time, your brain will begin to associate the craving cue with movement — and the old association will quietly dissolve.']},
+  impl:{name:'📌 Your plan',badge:'You already decided this',
+    intro:'You don\'t need to make a decision in this moment — you already made it. Implementation intentions work by settling the question in advance, so when the craving arrives, your response is already there. The decision has been made. All that\'s left is to follow through on what you already chose.',
+    steps:['Recall the plan you set in Setup: "When I feel a craving, I will immediately…"','If you haven\'t set one yet, make it now: pick one specific action — breathe, walk outside, cold water — and commit to it as your default.','The specificity is what makes it work. Vague intentions require willpower. Specific plans just require following a path you already laid.','Do that one thing right now.','Notice: you didn\'t have to decide anything. You just followed through. That\'s the whole point.','Each time you use your plan, the path deepens and the craving\'s pull on you weakens.']}
+};
+
+function openTech(key){
+  const t=TECH[key];
+  document.getElementById('sheetContent').innerHTML=`<h3>${t.name}</h3><span class="s-badge">${t.badge}</span><p>${t.intro}</p><div class="sheet-sub">How to do it</div>${t.steps.map((s,i)=>`<div class="step-item"><div class="step-n">${i+1}</div><div>${s}</div></div>`).join('')}`;
+  document.getElementById('overlay').classList.add('open');
+}
+
+function closeSheet(e){if(e.target===document.getElementById('overlay'))closeSheetDirect()}
+function closeSheetDirect(){document.getElementById('overlay').classList.remove('open')}
+
+function saveEntry(){
+  const mood=document.getElementById('jMood').value,trigger=document.getElementById('jTrigger').value,illusion=document.getElementById('jIllusion').value,text=document.getElementById('jText').value.trim();
+  if(!mood&&!text){alert('Please add a mood or reflection.');return}
+  const now=new Date();
+  S.journalEntries.unshift({date:now.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}),time:now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),day:days(),mood,trigger,illusion,text});
+  save();renderJournal();
+  ['jMood','jTrigger','jIllusion','jText'].forEach(id=>document.getElementById(id).value='');
+}
+
+function renderJournal(){
+  const el=document.getElementById('journalList');
+  if(!S.journalEntries.length){el.innerHTML='<div class="empty">No entries yet.</div>';return}
+  el.innerHTML=S.journalEntries.slice(0,20).map(e=>`<div class="j-entry"><div class="j-meta">${e.date} · ${e.time} · Day ${e.day}</div><div class="j-tags">${e.mood?`<span class="tag">${e.mood}</span>`:''} ${e.trigger?`<span class="tag">${e.trigger}</span>`:''} ${e.illusion&&e.illusion!=='None yet'?`<span class="tag">${e.illusion}</span>`:''}</div>${e.text?`<div class="j-text">${e.text}</div>`:''}</div>`).join('');
+}
+
+const TL=[{w:'20 min',brain:false,title:'Heart rate & BP drop',body:'Nicotine leaves blood vessels; circulation begins improving immediately.'},{w:'8 hrs',brain:false,title:'Oxygen normalizes',body:'Carbon monoxide clears; oxygen-carrying capacity restores.'},{w:'24 hrs',brain:true,title:'Receptor downregulation begins',body:'Your brain starts reducing the extra nicotinic receptors nicotine forced it to grow.'},{w:'48 hrs',brain:true,title:'Dopamine sensitivity recovering',body:'Smell and taste return sharply. Dopamine pathways begin recalibrating.'},{w:'72 hrs',brain:true,title:'Peak withdrawal passes',body:'The most intense phase is behind you.'},{w:'1 week',brain:true,title:'Habit loop weakening',body:'Smoking neural pathways pruning from disuse. Prefrontal cortex strengthening.'},{w:'2 weeks',brain:true,title:'Dopamine baseline rising',body:'Natural rewards feel pleasurable again. Sleep quality improving markedly.'},{w:'1 month',brain:true,title:'Receptors ~40% normalized',body:'Lung cilia fully regrown. Risk of infection falling.'},{w:'6 weeks',brain:true,title:'PFC significantly strengthened',body:'Impulse control and focus measurably improved.'},{w:'3 months',brain:true,title:'Full receptor normalization',body:'Biological craving mechanism largely deactivated. The neural trap is structurally dismantled.'},{w:'6 months',brain:true,title:'New reward pathways consolidated',body:'BDNF-driven neurogenesis built robust new circuitry. Cravings are rare.'},{w:'1 year',brain:false,title:'Heart disease risk halved',body:'Lung function up to 30% improved.'},{w:'5 years',brain:false,title:'Stroke risk = non-smoker',body:'Cerebrovascular health fully normalized.'},{w:'10 years',brain:false,title:'Lung cancer risk halved',body:'The long game paid off completely.'}];
+const TLD={'20 min':0.014,'8 hrs':0.33,'24 hrs':1,'48 hrs':2,'72 hrs':3,'1 week':7,'2 weeks':14,'1 month':30,'6 weeks':42,'3 months':90,'6 months':180,'1 year':365,'5 years':1825,'10 years':3650};
+
+function renderRecovery(){
+  const d=days();
+  document.getElementById('recoveryTl').innerHTML=TL.map(item=>`<div class="tl-row ${S.quitDate&&d>=(TLD[item.w]||0)?'done':''}"><div class="tl-dot"></div><div class="tl-when">${item.w}${item.brain?' · brain':''}</div><div class="tl-title">${item.title}</div><div class="tl-body">${item.body}</div></div>`).join('');
+}
+
+load();
+loadSetupForm();
+if(!S.quitDate)document.getElementById('quitDate').value=new Date().toISOString().split('T')[0];
+refreshDash();
+</script>
+</body>
+</html>
