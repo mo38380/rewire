@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -155,6 +156,7 @@
 <div class="scroll-area">
 
   <!-- TODAY -->
+
   <div id="panel-dashboard" class="panel active">
     <div id="phaseBlock" class="phase-badge">
       <div class="phase-dot" id="phaseDot"></div>
@@ -191,75 +193,93 @@
   </div>
 
   <!-- EASYWAY -->
+
   <div id="panel-easyway" class="panel">
     <div class="card">
       <div class="card-title">The Easyway Method</div>
       <div class="body-text">Most methods treat smoking as a pleasure you're sacrificing — creating deprivation that drives you back. Allen Carr's Easyway works differently: it dissolves the <em>illusions</em> that make you think smoking does something for you. When those illusions are gone, the desire to smoke simply disappears. No willpower. No white-knuckling. No substitutes.</div>
     </div>
-    <div class="quote-block">
-      <div class="quote-text">Smoking merely relieves the withdrawal caused by the previous cigarette. Every cigarette creates the very problem it appears to solve. When you truly understand this, the desire to smoke disappears — you are not giving anything up.</div>
-      <div class="quote-src">Allen Carr's Easyway principle</div>
-    </div>
-    <div class="slabel">While you read this section</div>
-    <div class="card">
-      <div class="body-text" style="margin-bottom:12px">Keep smoking as normal while you work through these ideas. Do not try to cut down — that makes each cigarette feel more valuable. The goal is to change how you <em>think</em> about smoking. Quitting happens naturally when the illusions are fully dismantled.</div>
-      <div class="rule-item"><span class="rule-num">①</span><span>Keep smoking normally — do not cut down yet</span></div>
-      <div class="rule-item"><span class="rule-num">②</span><span>Read each illusion with genuine curiosity</span></div>
-      <div class="rule-item"><span class="rule-num">③</span><span>While you smoke, honestly ask: what is this actually giving me?</span></div>
-      <div class="rule-item" style="margin-bottom:0"><span class="rule-num">④</span><span>Insight is the mechanism — not willpower</span></div>
-    </div>
-    <div class="slabel">The illusions — tap each to reveal the truth</div>
-    <div class="illusion-card" onclick="toggleIllusion(this)">
-      <div class="illusion-head"><div><div class="illusion-q">"Smoking relaxes me."</div><div class="illusion-title">The Relaxation Illusion</div></div><div class="illusion-chevron">▾</div></div>
-      <div class="illusion-body">Nicotine is a stimulant, not a relaxant. What feels like relaxation is the relief of the tension and anxiety that nicotine <em>itself</em> caused. A non-smoker is already in the calm state you're trying to reach. When you smoke you temporarily return to baseline — then the drug wears off and the anxiety builds again until the next cigarette. The cigarette created the very problem it appears to solve.</div>
-    </div>
-    <div class="illusion-card" onclick="toggleIllusion(this)">
-      <div class="illusion-head"><div><div class="illusion-q">"I enjoy it. It's a genuine pleasure."</div><div class="illusion-title">The Pleasure Illusion</div></div><div class="illusion-chevron">▾</div></div>
-      <div class="illusion-body">Your first cigarette tasted awful. The "pleasure" you feel now is entirely manufactured by the addiction — it's the brief relief of silencing the craving the addiction created. Like wearing tight shoes all day for the pleasure of taking them off. You're not experiencing pleasure; you're experiencing relief from a discomfort you chose to create. Remove the addiction, and the "pleasure" has nothing to stand on.</div>
-    </div>
-    <div class="illusion-card" onclick="toggleIllusion(this)">
-      <div class="illusion-head"><div><div class="illusion-q">"It helps me concentrate / think."</div><div class="illusion-title">The Focus Illusion</div></div><div class="illusion-chevron">▾</div></div>
-      <div class="illusion-body">Nicotine withdrawal causes restlessness and foggy thinking. A cigarette relieves that withdrawal, restoring the mental clarity you had before the last cigarette wore off. You're not enhancing your concentration — you're restoring it to the level a non-smoker maintains continuously, without any chemical aid at all.</div>
-    </div>
-    <div class="illusion-card" onclick="toggleIllusion(this)">
-      <div class="illusion-head"><div><div class="illusion-q">"Quitting will make me miserable / anxious."</div><div class="illusion-title">The Withdrawal Fear Illusion</div></div><div class="illusion-chevron">▾</div></div>
-      <div class="illusion-body">The physical withdrawal from nicotine is genuinely mild — a faint, slightly uncomfortable feeling that fades within days. What makes quitting feel unbearable is the <em>mental</em> belief that you're sacrificing something precious. Once you understand there is nothing real being given up — because cigarettes only provided what a non-smoker has naturally — the mental battle evaporates. You're not losing a crutch. You're removing a trap.</div>
-    </div>
-    <div class="illusion-card" onclick="toggleIllusion(this)">
-      <div class="illusion-head"><div><div class="illusion-q">"I'll gain weight when I quit."</div><div class="illusion-title">The Weight Illusion</div></div><div class="illusion-chevron">▾</div></div>
-      <div class="illusion-body">Weight gain happens when people substitute food for cigarettes — eating to fill a void they believe quitting created. If you quit without feeling deprived, there is no void to fill. Nicotine raises metabolism only marginally — look at the number of overweight smokers. Once free, your sense of taste improves, food becomes more satisfying in smaller amounts, and your capacity for exercise increases significantly. The fear of weight gain is itself part of the trap keeping you smoking.</div>
-    </div>
-    <div class="illusion-card" onclick="toggleIllusion(this)">
-      <div class="illusion-head"><div><div class="illusion-q">"Smoking is my stress relief."</div><div class="illusion-title">The Stress Relief Illusion</div></div><div class="illusion-chevron">▾</div></div>
-      <div class="illusion-body">Research consistently shows smokers have higher baseline anxiety than non-smokers. The "stress" that smoking relieves is largely nicotine withdrawal compounding ordinary life stress. Smoking creates a loop: stress → smoke → brief relief → more withdrawal anxiety → more stress → smoke again. Non-smokers face identical life pressures without needing a cigarette. Once free, you'll have one fewer source of anxiety — not one fewer tool to manage it.</div>
-    </div>
-    <div class="illusion-card" onclick="toggleIllusion(this)">
-      <div class="illusion-head"><div><div class="illusion-q">"I'm just an addictive person."</div><div class="illusion-title">The Identity Illusion</div></div><div class="illusion-chevron">▾</div></div>
-      <div class="illusion-body">Nicotine is one of the most physically addictive substances known. The vast majority of people who try it regularly become dependent. This says nothing about your character — it says everything about the drug. The neural pathways of addiction were built by the drug, not by a flaw in you. And just as they were built by repetition, they can be unmade through neuroplasticity. You are not an addict. You are a person who walked into a chemical trap that catches almost everyone.</div>
-    </div>
-    <div class="illusion-card" onclick="toggleIllusion(this)">
-      <div class="illusion-head"><div><div class="illusion-q">"I can't imagine socialising without it."</div><div class="illusion-title">The Social Prop Illusion</div></div><div class="illusion-chevron">▾</div></div>
-      <div class="illusion-body">You don't need a cigarette to socialise — billions of people do so without ever smoking. The discomfort of not smoking in a social situation is the discomfort of withdrawal, not a genuine social need. As a non-smoker, you won't have that withdrawal anxiety to begin with. Social situations will actually become more enjoyable — because you won't be distracted by planning your next cigarette or needing to step away from the group.</div>
-    </div>
-    <div class="slabel">Mindful smoking exercise</div>
-    <div class="smoke-prompt">
-      <div class="smoke-q">Before your next cigarette, ask yourself honestly:</div>
-      <div class="smoke-options">
-        <button class="smoke-opt" onclick="smokeAnswer('relax')">I want it to relax me</button>
-        <button class="smoke-opt" onclick="smokeAnswer('focus')">I need it to concentrate</button>
-        <button class="smoke-opt" onclick="smokeAnswer('enjoy')">I just enjoy it / the ritual</button>
-        <button class="smoke-opt" onclick="smokeAnswer('craving')">I feel restless / have a craving</button>
-        <button class="smoke-opt" onclick="smokeAnswer('habit')">Habit — I wasn't even thinking about it</button>
-        <button class="smoke-opt" onclick="smokeAnswer('social')">Social — others are smoking</button>
-      </div>
-      <div class="smoke-result" id="smokeResult"></div>
-    </div>
-    <div class="card">
-      <div class="body-text">Work through these illusions over days. There is no set timeline. When the illusions dissolve, something shifts: you stop seeing cigarettes as something you're giving up and start seeing the trap you're walking out of. Your last cigarette will feel like a release — not a loss.</div>
-    </div>
+
+```
+<div class="quote-block">
+  <div class="quote-text">Smoking merely relieves the withdrawal caused by the previous cigarette. Every cigarette creates the very problem it appears to solve. When you truly understand this, the desire to smoke disappears — you are not giving anything up.</div>
+  <div class="quote-src">Allen Carr's Easyway principle</div>
+</div>
+
+<div class="slabel">While you read this section</div>
+<div class="card">
+  <div class="body-text" style="margin-bottom:12px">Keep smoking as normal while you work through these ideas. Do not try to cut down — that makes each cigarette feel more valuable. The goal is to change how you <em>think</em> about smoking. Quitting happens naturally when the illusions are fully dismantled.</div>
+  <div class="rule-item"><span class="rule-num">①</span><span>Keep smoking normally — do not cut down yet</span></div>
+  <div class="rule-item"><span class="rule-num">②</span><span>Read each illusion with genuine curiosity</span></div>
+  <div class="rule-item"><span class="rule-num">③</span><span>While you smoke, honestly ask: what is this actually giving me?</span></div>
+  <div class="rule-item" style="margin-bottom:0"><span class="rule-num">④</span><span>Insight is the mechanism — not willpower</span></div>
+</div>
+
+<div class="slabel">The illusions — tap each to reveal the truth</div>
+
+<div class="illusion-card" onclick="toggleIllusion(this)">
+  <div class="illusion-head"><div><div class="illusion-q">"Smoking relaxes me."</div><div class="illusion-title">The Relaxation Illusion</div></div><div class="illusion-chevron">▾</div></div>
+  <div class="illusion-body">Nicotine is a stimulant, not a relaxant. What feels like relaxation is the relief of the tension and anxiety that nicotine <em>itself</em> caused. A non-smoker is already in the calm state you're trying to reach. When you smoke you temporarily return to baseline — then the drug wears off and the anxiety builds again until the next cigarette. The cigarette created the very problem it appears to solve.</div>
+</div>
+
+<div class="illusion-card" onclick="toggleIllusion(this)">
+  <div class="illusion-head"><div><div class="illusion-q">"I enjoy it. It's a genuine pleasure."</div><div class="illusion-title">The Pleasure Illusion</div></div><div class="illusion-chevron">▾</div></div>
+  <div class="illusion-body">Your first cigarette tasted awful. The "pleasure" you feel now is entirely manufactured by the addiction — it's the brief relief of silencing the craving the addiction created. Like wearing tight shoes all day for the pleasure of taking them off. You're not experiencing pleasure; you're experiencing relief from a discomfort you chose to create. Remove the addiction, and the "pleasure" has nothing to stand on.</div>
+</div>
+
+<div class="illusion-card" onclick="toggleIllusion(this)">
+  <div class="illusion-head"><div><div class="illusion-q">"It helps me concentrate / think."</div><div class="illusion-title">The Focus Illusion</div></div><div class="illusion-chevron">▾</div></div>
+  <div class="illusion-body">Nicotine withdrawal causes restlessness and foggy thinking. A cigarette relieves that withdrawal, restoring the mental clarity you had before the last cigarette wore off. You're not enhancing your concentration — you're restoring it to the level a non-smoker maintains continuously, without any chemical aid at all.</div>
+</div>
+
+<div class="illusion-card" onclick="toggleIllusion(this)">
+  <div class="illusion-head"><div><div class="illusion-q">"Quitting will make me miserable / anxious."</div><div class="illusion-title">The Withdrawal Fear Illusion</div></div><div class="illusion-chevron">▾</div></div>
+  <div class="illusion-body">The physical withdrawal from nicotine is genuinely mild — a faint, slightly uncomfortable feeling that fades within days. What makes quitting feel unbearable is the <em>mental</em> belief that you're sacrificing something precious. Once you understand there is nothing real being given up — because cigarettes only provided what a non-smoker has naturally — the mental battle evaporates. You're not losing a crutch. You're removing a trap.</div>
+</div>
+
+<div class="illusion-card" onclick="toggleIllusion(this)">
+  <div class="illusion-head"><div><div class="illusion-q">"I'll gain weight when I quit."</div><div class="illusion-title">The Weight Illusion</div></div><div class="illusion-chevron">▾</div></div>
+  <div class="illusion-body">Weight gain happens when people substitute food for cigarettes — eating to fill a void they believe quitting created. If you quit without feeling deprived, there is no void to fill. Nicotine raises metabolism only marginally — look at the number of overweight smokers. Once free, your sense of taste improves, food becomes more satisfying in smaller amounts, and your capacity for exercise increases significantly. The fear of weight gain is itself part of the trap keeping you smoking.</div>
+</div>
+
+<div class="illusion-card" onclick="toggleIllusion(this)">
+  <div class="illusion-head"><div><div class="illusion-q">"Smoking is my stress relief."</div><div class="illusion-title">The Stress Relief Illusion</div></div><div class="illusion-chevron">▾</div></div>
+  <div class="illusion-body">Research consistently shows smokers have higher baseline anxiety than non-smokers. The "stress" that smoking relieves is largely nicotine withdrawal compounding ordinary life stress. Smoking creates a loop: stress → smoke → brief relief → more withdrawal anxiety → more stress → smoke again. Non-smokers face identical life pressures without needing a cigarette. Once free, you'll have one fewer source of anxiety — not one fewer tool to manage it.</div>
+</div>
+
+<div class="illusion-card" onclick="toggleIllusion(this)">
+  <div class="illusion-head"><div><div class="illusion-q">"I'm just an addictive person."</div><div class="illusion-title">The Identity Illusion</div></div><div class="illusion-chevron">▾</div></div>
+  <div class="illusion-body">Nicotine is one of the most physically addictive substances known. The vast majority of people who try it regularly become dependent. This says nothing about your character — it says everything about the drug. The neural pathways of addiction were built by the drug, not by a flaw in you. And just as they were built by repetition, they can be unmade through neuroplasticity. You are not an addict. You are a person who walked into a chemical trap that catches almost everyone.</div>
+</div>
+
+<div class="illusion-card" onclick="toggleIllusion(this)">
+  <div class="illusion-head"><div><div class="illusion-q">"I can't imagine socialising without it."</div><div class="illusion-title">The Social Prop Illusion</div></div><div class="illusion-chevron">▾</div></div>
+  <div class="illusion-body">You don't need a cigarette to socialise — billions of people do so without ever smoking. The discomfort of not smoking in a social situation is the discomfort of withdrawal, not a genuine social need. As a non-smoker, you won't have that withdrawal anxiety to begin with. Social situations will actually become more enjoyable — because you won't be distracted by planning your next cigarette or needing to step away from the group.</div>
+</div>
+
+<div class="slabel">Mindful smoking exercise</div>
+<div class="smoke-prompt">
+  <div class="smoke-q">Before your next cigarette, ask yourself honestly:</div>
+  <div class="smoke-options">
+    <button class="smoke-opt" onclick="smokeAnswer('relax')">I want it to relax me</button>
+    <button class="smoke-opt" onclick="smokeAnswer('focus')">I need it to concentrate</button>
+    <button class="smoke-opt" onclick="smokeAnswer('enjoy')">I just enjoy it / the ritual</button>
+    <button class="smoke-opt" onclick="smokeAnswer('craving')">I feel restless / have a craving</button>
+    <button class="smoke-opt" onclick="smokeAnswer('habit')">Habit — I wasn't even thinking about it</button>
+    <button class="smoke-opt" onclick="smokeAnswer('social')">Social — others are smoking</button>
+  </div>
+  <div class="smoke-result" id="smokeResult"></div>
+</div>
+
+<div class="card">
+  <div class="body-text">Work through these illusions over days. There is no set timeline. When the illusions dissolve, something shifts: you stop seeing cigarettes as something you're giving up and start seeing the trap you're walking out of. Your last cigarette will feel like a release — not a loss.</div>
+</div>
+```
+
   </div>
 
-  <!-- URGE -->
+  <!-- URGE BUSTER -->
+
   <div id="panel-urge" class="panel">
     <div class="card">
       <div class="card-title">You're noticing a craving</div>
@@ -267,34 +287,40 @@
       <div class="body-text" style="margin-bottom:14px">This is your body adjusting — not suffering. The feeling has nothing to offer you. It will peak and dissolve within 90 seconds on its own. You don't need to fight it or resist it. Just watch it pass.</div>
       <button class="urge-btn" id="urgeBtn" onclick="startTimer()">I'm noticing a craving</button>
     </div>
-    <div class="timer-block" id="timerBlock">
-      <div class="slabel" style="margin-top:0;text-align:center">Watching it pass</div>
-      <div class="timer-circle">
-        <svg viewBox="0 0 110 110"><circle cx="55" cy="55" r="54" id="timerRing"/></svg>
-        <div><div class="timer-num" id="timerNum">90</div><div class="timer-unit">sec</div></div>
-      </div>
-      <div class="timer-msg" id="timerMsg">Breathe gently. You're already free — this is just the old trap knocking.</div>
-      <div id="timerMotivation" style="display:none;font-family:'Libre Baskerville',serif;font-style:italic;font-size:13px;color:var(--accent-warm);line-height:1.6;margin-bottom:12px;padding:10px 14px;background:#fdf8f4;border-radius:8px;border-left:3px solid var(--accent-warm)"></div>
-      <div class="breath-ring" id="breathRing">inhale</div>
-      <div class="timer-actions">
-        <button class="btn btn-green" onclick="cravingDefeated()">It passed — I'm free</button>
-        <button class="btn" style="border-color:var(--border)" onclick="openSmokeSheet()">I still want to smoke</button>
-      </div>
-    </div>
-    <div class="slabel">Let it pass with</div>
-    <div class="card" style="padding:12px">
-      <div class="tech-grid">
-        <div class="tech-card" onclick="openTech('box')"><div class="tech-icon">🫧</div><div class="tech-name">Breathe</div><div class="tech-desc">Make room for the feeling — breathe into it</div></div>
-        <div class="tech-card" onclick="openTech('urge')"><div class="tech-icon">🌊</div><div class="tech-name">Watch it</div><div class="tech-desc">You are the driver — cravings are just passengers</div></div>
-        <div class="tech-card" onclick="openTech('reframe')"><div class="tech-icon">💡</div><div class="tech-name">See it clearly</div><div class="tech-desc">Defuse the thought — you don't have to obey it</div></div>
-        <div class="tech-card" onclick="openTech('cold')"><div class="tech-icon">❄️</div><div class="tech-name">Reset</div><div class="tech-desc">Cold water to shift your state in seconds</div></div>
-        <div class="tech-card" onclick="openTech('move')"><div class="tech-icon">🏃</div><div class="tech-name">Move</div><div class="tech-desc">Let your body make its own feel-good</div></div>
-        <div class="tech-card" onclick="openTech('impl')"><div class="tech-icon">📌</div><div class="tech-name">Your plan</div><div class="tech-desc">Act from your values, not from the craving</div></div>
-      </div>
-    </div>
+
+```
+<div class="timer-block" id="timerBlock">
+  <div class="slabel" style="margin-top:0;text-align:center">Watching it pass</div>
+  <div class="timer-circle">
+    <svg viewBox="0 0 110 110"><circle cx="55" cy="55" r="54" id="timerRing"/></svg>
+    <div><div class="timer-num" id="timerNum">90</div><div class="timer-unit">sec</div></div>
+  </div>
+  <div class="timer-msg" id="timerMsg">Breathe gently. You're already free — this is just the old trap knocking.</div>
+  <div id="timerMotivation" style="display:none;font-family:'Libre Baskerville',serif;font-style:italic;font-size:13px;color:var(--accent-warm);line-height:1.6;margin-bottom:12px;padding:10px 14px;background:#fdf8f4;border-radius:8px;border-left:3px solid var(--accent-warm)"></div>
+  <div class="breath-ring" id="breathRing">inhale</div>
+  <div class="timer-actions">
+    <button class="btn btn-green" onclick="cravingDefeated()">It passed — I'm free</button>
+    <button class="btn" style="border-color:var(--border)" onclick="openSmokeSheet()">I still want to smoke</button>
+  </div>
+</div>
+
+<div class="slabel">Let it pass with</div>
+<div class="card" style="padding:12px">
+  <div class="tech-grid">
+    <div class="tech-card" onclick="openTech('box')"><div class="tech-icon">🫧</div><div class="tech-name">Breathe</div><div class="tech-desc">Let your body settle into the calm that's already there</div></div>
+    <div class="tech-card" onclick="openTech('urge')"><div class="tech-icon">🌊</div><div class="tech-name">Watch it</div><div class="tech-desc">Observe with curiosity as the craving dissolves</div></div>
+    <div class="tech-card" onclick="openTech('reframe')"><div class="tech-icon">💡</div><div class="tech-name">See it clearly</div><div class="tech-desc">Remember what this feeling actually is</div></div>
+    <div class="tech-card" onclick="openTech('cold')"><div class="tech-icon">❄️</div><div class="tech-name">Reset</div><div class="tech-desc">Cold water to shift your state in seconds</div></div>
+    <div class="tech-card" onclick="openTech('move')"><div class="tech-icon">🏃</div><div class="tech-name">Move</div><div class="tech-desc">Let your body make its own feel-good</div></div>
+    <div class="tech-card" onclick="openTech('impl')"><div class="tech-icon">📌</div><div class="tech-name">Your plan</div><div class="tech-desc">The response you already decided on in advance</div></div>
+  </div>
+</div>
+```
+
   </div>
 
   <!-- SCIENCE -->
+
   <div id="panel-science" class="panel">
     <div class="card">
       <div class="card-title">Your Brain on Nicotine</div>
@@ -312,6 +338,7 @@
   </div>
 
   <!-- JOURNAL -->
+
   <div id="panel-journal" class="panel">
     <div class="card">
       <div class="form-row"><label>Mood</label>
@@ -333,12 +360,14 @@
   </div>
 
   <!-- RECOVERY -->
+
   <div id="panel-recovery" class="panel">
     <div class="card"><div class="card-title">Brain & Body Recovery</div><div class="body-text">Your body begins healing the moment you stop. Milestones you've passed glow green.</div></div>
     <div class="card"><div class="tl" id="recoveryTl"></div></div>
   </div>
 
   <!-- SETUP -->
+
   <div id="panel-setup" class="panel">
     <div class="card">
       <div class="card-title">Your profile</div>
@@ -366,6 +395,7 @@
 </div>
 
 <!-- BOTTOM NAV -->
+
 <nav class="bottom-nav">
   <button class="nav-btn active" onclick="go('dashboard',this)"><span class="nav-icon">◎</span><span class="nav-label">Today</span></button>
   <button class="nav-btn" onclick="go('easyway',this)"><span class="nav-icon">💡</span><span class="nav-label">Easyway</span></button>
@@ -376,6 +406,7 @@
 </nav>
 
 <!-- BOTTOM SHEET -->
+
 <div class="overlay" id="overlay" onclick="closeSheet(event)">
   <div class="sheet" id="sheet">
     <div class="sheet-handle"></div>
@@ -427,8 +458,9 @@ function loadSetupForm(){
 }
 
 function localMidnight(dateStr){
-  const d=new Date(dateStr);
-  return new Date(d.getFullYear(),d.getMonth(),d.getDate());
+  // Parse YYYY-MM-DD manually — new Date(string) treats date-only as UTC
+  const [y,m,d]=dateStr.split('-').map(Number);
+  return new Date(y,m-1,d);
 }
 function todayMidnight(){
   const n=new Date();
@@ -438,12 +470,16 @@ function diffDays(fromDate){
   return Math.max(0,Math.floor((todayMidnight()-fromDate)/86400000));
 }
 function days(){if(!S.quitDate)return 0;return diffDays(localMidnight(S.quitDate))}
+// Days since last smoked (for brain rewiring) — falls back to quit date if never smoked
 function cleanDays(){
-  const base=S.lastSmokedDate||S.quitDate;
-  if(!base)return 0;
-  const d=new Date(base);
-  const localBase=new Date(d.getFullYear(),d.getMonth(),d.getDate());
-  return diffDays(localBase);
+  if(!S.quitDate)return 0;
+  if(S.lastSmokedDate){
+    // Full ISO datetime — safe to parse directly, getFullYear etc return local
+    const d=new Date(S.lastSmokedDate);
+    return diffDays(new Date(d.getFullYear(),d.getMonth(),d.getDate()));
+  }
+  // Fall back to quit date — must use manual parse to avoid UTC interpretation
+  return diffDays(localMidnight(S.quitDate));
 }
 
 function getPhase(cd){
@@ -457,6 +493,7 @@ function getPhase(cd){
   return{name:'Free',sub:'The biology of addiction is behind you',dot:'green'};
 }
 
+// Motivation label → gentle reminder phrase
 const MOT_PHRASES={
   'Health & longevity':'You\'re doing this for your health — every craving that passes is your body healing.',
   'Family / children':'The people who need you are why this matters.',
@@ -470,8 +507,12 @@ const MOT_PHRASES={
 function refreshDash(){
   const d=days();
   const cd=cleanDays();
-  document.getElementById('statDays').textContent=d;
-  document.getElementById('statStreak').textContent=cd;
+
+  // Stat tiles — reframe "days free" as journey, show clean streak separately
+  const totalDays=d;
+  const streakDays=cd;
+  document.getElementById('statDays').textContent=totalDays;
+  document.getElementById('statStreak').textContent=streakDays;
   const todayStamp=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short'});
   const smokedToday=(S.cravingLog||[]).filter(e=>!e.ok&&e.d===todayStamp).length;
   const avoidedToday=Math.max(0,S.cigsPerDay-smokedToday);
@@ -480,11 +521,15 @@ function refreshDash(){
   document.getElementById('statCigsCumWrap').textContent=ca+' total';
   document.getElementById('statMoney').textContent='£'+((ca/S.cigsPerPack)*S.packCost).toFixed(0);
   document.getElementById('statUrges').textContent=S.urgesDefeated;
+
+  // Phase based on clean streak
   const ph=getPhase(cd);
   document.getElementById('phaseName').textContent=ph.name;
   document.getElementById('phaseSub').textContent=ph.sub;
   const dot=document.getElementById('phaseDot');
   dot.className='phase-dot'+(ph.dot?' '+ph.dot:'');
+
+  // Brain rewiring based on clean streak (cd), not total days
   const rp=Math.min(100,Math.round(cd/90*100));
   const tot=S.urgesDefeated+S.urgesLost;
   const pp=tot>0?Math.min(100,Math.round(S.urgesDefeated/tot*100)):0;
@@ -493,8 +538,11 @@ function refreshDash(){
   document.getElementById('pfcPct').textContent=pp+'%';
   document.getElementById('recPct').textContent=np+'%';
   setTimeout(()=>{document.getElementById('rewardBar').style.width=rp+'%';document.getElementById('pfcBar').style.width=pp+'%';document.getElementById('recBar').style.width=np+'%'},80);
+
+  // Brain message based on clean streak
   const msgs=[[90,'Nicotinic receptors fully normalized. The biological craving mechanism is deactivated.'],[60,'Two months smoke-free. New reward pathways consolidated. The old circuit is functionally gone.'],[30,'One month. Receptor normalization ~50% complete. Cravings becoming infrequent.'],[14,'Two weeks. The smoking neural highway is losing traffic rapidly.'],[7,'One week. Prefrontal cortex strengthening. Habit loop weakening from disuse.'],[3,'The peak intensity is behind you. Your reward system is recalibrating.'],[1,'Rewiring has begun. Every clean hour counts.'],[0,S.lastSmokedDate?'You smoked — and you\'re back. That\'s what matters. The rewiring restarts now.':'Enter your quit date in Setup to start tracking.']];
   document.getElementById('brainMsg').textContent=msgs.find(([n])=>cd>=n)[1];
+
   const ins=['Every craving you observe without acting on is a vote for a different version of yourself. Neurons that fire together wire together — you\'re redirecting traffic.','Notice how the craving had a beginning, middle and end — without a cigarette. Your insula is learning that the signal doesn\'t require a response.','The "relief" you felt from past cigarettes was never relaxation — it was temporary relief of anxiety the previous cigarette created. You\'re ahead of that loop now.','Dopamine baseline rises roughly 15% after two weeks without nicotine. Natural pleasures will feel noticeably more rewarding as your receptors recover.','The anterior cingulate cortex gets physically thicker with every act of self-regulation. You are building a stronger brain, one craving at a time.','Withdrawal symptoms are your brain recalibrating. They are not suffering — they are the sound of repair.','The illusion of smoking as pleasure is dismantled by simple observation: the first cigarette ever tasted awful. All the "pleasure" was built by the addiction itself.','Sleep tonight prunes the smoking synaptic pathway and consolidates new circuits. Every good night\'s sleep is active neurological renovation.','The insula is relearning: craving sensation ≠ must smoke. Each time you observe without acting, this rewrite happens at the cellular level.','If-then planning pre-engages the prefrontal cortex so it intercepts the habit loop before it fires. Make yours specific and vivid.'];
   document.getElementById('dailyInsight').textContent=ins[d%ins.length];
   const quotes=['Every cigarette not smoked is rewiring happening in real time.','The trap only works while the illusion holds. You are seeing through it.','Discomfort is not danger. It is the sound of your brain changing.','You are not giving anything up. You are walking out of a trap.','Each craving that passes makes the next one quieter.','The urge is a passenger. You are the driver.','Freedom is not the absence of cravings. It is choosing not to obey them.','Every moment clean is a vote for the person you are becoming.','The cigarette never delivered what it promised. It only silenced what it caused.','Your brain is plastic. What you repeat, you become.'];
@@ -554,6 +602,7 @@ function startTimer(){
   document.getElementById('timerNum').textContent=90;
   document.getElementById('timerMsg').textContent='Breathe gently. You\'re already free — this is just the old trap knocking.';
   document.getElementById('timerRing').style.strokeDashoffset=0;
+  // Show motivation reminder gently
   const motEl=document.getElementById('timerMotivation');
   const motPhrase=S.motivation&&MOT_PHRASES[S.motivation]?MOT_PHRASES[S.motivation]:'';
   if(motEl)motEl.textContent=motPhrase;
@@ -603,6 +652,7 @@ function smokeConfirmedDirect(){
   alert('Noted — no judgement. As you smoke, just notice honestly: was it what you expected? The gap between expectation and reality is where the illusion lives. The rewiring restarts from this moment.');
 }
 
+// ── ILLUSION REFLECTION BEFORE LOGGING A CIGARETTE ──
 const SMOKE_REASONS=[
   {key:'relax',  label:'I want to relax / de-stress'},
   {key:'focus',  label:'I need to concentrate'},
@@ -730,8 +780,9 @@ function renderRecovery(){
 
 load();
 loadSetupForm();
-if(!S.quitDate)document.getElementById('quitDate').value=new Date().toISOString().split('T')[0];
+if(!S.quitDate){const n=new Date();const ld=n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');document.getElementById('quitDate').value=ld;}
 refreshDash();
 </script>
+
 </body>
 </html>
