@@ -426,11 +426,24 @@ function loadSetupForm(){
   if(S.intent)document.getElementById('intent').value=S.intent;
 }
 
-function days(){if(!S.quitDate)return 0;return Math.max(0,Math.floor((Date.now()-new Date(S.quitDate))/86400000))}
+function localMidnight(dateStr){
+  const d=new Date(dateStr);
+  return new Date(d.getFullYear(),d.getMonth(),d.getDate());
+}
+function todayMidnight(){
+  const n=new Date();
+  return new Date(n.getFullYear(),n.getMonth(),n.getDate());
+}
+function diffDays(fromDate){
+  return Math.max(0,Math.floor((todayMidnight()-fromDate)/86400000));
+}
+function days(){if(!S.quitDate)return 0;return diffDays(localMidnight(S.quitDate))}
 function cleanDays(){
   const base=S.lastSmokedDate||S.quitDate;
   if(!base)return 0;
-  return Math.max(0,Math.floor((Date.now()-new Date(base))/86400000));
+  const d=new Date(base);
+  const localBase=new Date(d.getFullYear(),d.getMonth(),d.getDate());
+  return diffDays(localBase);
 }
 
 function getPhase(cd){
