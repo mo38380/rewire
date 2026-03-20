@@ -166,12 +166,12 @@
     <div class="stats-grid">
       <div class="stat-tile"><div class="stat-num g" id="statDays">0</div><div class="stat-lbl">Days on this journey</div></div>
       <div class="stat-tile"><div class="stat-num g" id="statStreak">0</div><div class="stat-lbl">Clean days (current)</div></div>
-      <div class="stat-tile"><div class="stat-num a" id="statCigs">0</div><div class="stat-lbl">Cigs not smoked</div></div>
-      <div class="stat-tile"><div class="stat-num w" id="statMoney">£0</div><div class="stat-lbl">Saved</div></div>
+      <div class="stat-tile"><div class="stat-num a" id="statCigsToday">0</div><div class="stat-lbl">Cigarettes avoided today</div><div id="statCigsCumWrap" style="margin-top:4px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:.5px">0 total</div><div style="margin-top:6px"><span onclick="logSmokeQuick()" style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:.5px;cursor:pointer;text-decoration:underline;text-underline-offset:2px">+ log a smoke</span></div></div>
+      <div class="stat-tile" style="background:var(--bg2);border-style:dashed"><div id="rotatingQuote" style="font-family:'Libre Baskerville',serif;font-style:italic;font-size:13px;color:var(--text-mid);line-height:1.65">…</div></div>
     </div>
     <div class="stats-grid" style="margin-top:-2px">
       <div class="stat-tile"><div class="stat-num r" id="statUrges">0</div><div class="stat-lbl">Cravings passed</div></div>
-      <div class="stat-tile" style="background:var(--bg2);border-style:dashed"><div class="stat-lbl" style="margin-bottom:6px;margin-top:2px">Every cigarette not smoked</div><div style="font-family:'Libre Baskerville',serif;font-style:italic;font-size:11px;color:var(--text-mid);line-height:1.5">is rewiring happening in real time.</div></div>
+      <div class="stat-tile"><div class="stat-num w" id="statMoney">£0</div><div class="stat-lbl">Saved</div></div>
     </div>
     <div class="card">
       <div class="slabel" style="margin-top:0">Brain rewiring</div>
@@ -284,12 +284,12 @@
     <div class="slabel">Let it pass with</div>
     <div class="card" style="padding:12px">
       <div class="tech-grid">
-        <div class="tech-card" onclick="openTech('box')"><div class="tech-icon">🫧</div><div class="tech-name">Breathe</div><div class="tech-desc">Let your body settle into the calm that's already there</div></div>
-        <div class="tech-card" onclick="openTech('urge')"><div class="tech-icon">🌊</div><div class="tech-name">Watch it</div><div class="tech-desc">Observe with curiosity as the craving dissolves</div></div>
-        <div class="tech-card" onclick="openTech('reframe')"><div class="tech-icon">💡</div><div class="tech-name">See it clearly</div><div class="tech-desc">Remember what this feeling actually is</div></div>
+        <div class="tech-card" onclick="openTech('box')"><div class="tech-icon">🫧</div><div class="tech-name">Breathe</div><div class="tech-desc">Make room for the feeling — breathe into it</div></div>
+        <div class="tech-card" onclick="openTech('urge')"><div class="tech-icon">🌊</div><div class="tech-name">Watch it</div><div class="tech-desc">You are the driver — cravings are just passengers</div></div>
+        <div class="tech-card" onclick="openTech('reframe')"><div class="tech-icon">💡</div><div class="tech-name">See it clearly</div><div class="tech-desc">Defuse the thought — you don't have to obey it</div></div>
         <div class="tech-card" onclick="openTech('cold')"><div class="tech-icon">❄️</div><div class="tech-name">Reset</div><div class="tech-desc">Cold water to shift your state in seconds</div></div>
         <div class="tech-card" onclick="openTech('move')"><div class="tech-icon">🏃</div><div class="tech-name">Move</div><div class="tech-desc">Let your body make its own feel-good</div></div>
-        <div class="tech-card" onclick="openTech('impl')"><div class="tech-icon">📌</div><div class="tech-name">Your plan</div><div class="tech-desc">The response you already decided on in advance</div></div>
+        <div class="tech-card" onclick="openTech('impl')"><div class="tech-icon">📌</div><div class="tech-name">Your plan</div><div class="tech-desc">Act from your values, not from the craving</div></div>
       </div>
     </div>
   </div>
@@ -411,6 +411,8 @@ function saveSetup(){
   S.motivation=document.getElementById('motivation').value;
   S.triggers=document.getElementById('triggers').value;
   S.intent=document.getElementById('intent').value;
+  S.lastSmokedDate=null;
+  S.smokedLog=0;
   save();go('dashboard',document.querySelector('.nav-btn'));
 }
 
@@ -457,8 +459,12 @@ function refreshDash(){
   const cd=cleanDays();
   document.getElementById('statDays').textContent=d;
   document.getElementById('statStreak').textContent=cd;
+  const todayStamp=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+  const smokedToday=(S.cravingLog||[]).filter(e=>!e.ok&&e.d===todayStamp).length;
+  const avoidedToday=Math.max(0,S.cigsPerDay-smokedToday);
   const ca=Math.max(0,d*S.cigsPerDay-(S.smokedLog||0));
-  document.getElementById('statCigs').textContent=ca;
+  document.getElementById('statCigsToday').textContent=avoidedToday;
+  document.getElementById('statCigsCumWrap').textContent=ca+' total';
   document.getElementById('statMoney').textContent='£'+((ca/S.cigsPerPack)*S.packCost).toFixed(0);
   document.getElementById('statUrges').textContent=S.urgesDefeated;
   const ph=getPhase(cd);
@@ -478,6 +484,8 @@ function refreshDash(){
   document.getElementById('brainMsg').textContent=msgs.find(([n])=>cd>=n)[1];
   const ins=['Every craving you observe without acting on is a vote for a different version of yourself. Neurons that fire together wire together — you\'re redirecting traffic.','Notice how the craving had a beginning, middle and end — without a cigarette. Your insula is learning that the signal doesn\'t require a response.','The "relief" you felt from past cigarettes was never relaxation — it was temporary relief of anxiety the previous cigarette created. You\'re ahead of that loop now.','Dopamine baseline rises roughly 15% after two weeks without nicotine. Natural pleasures will feel noticeably more rewarding as your receptors recover.','The anterior cingulate cortex gets physically thicker with every act of self-regulation. You are building a stronger brain, one craving at a time.','Withdrawal symptoms are your brain recalibrating. They are not suffering — they are the sound of repair.','The illusion of smoking as pleasure is dismantled by simple observation: the first cigarette ever tasted awful. All the "pleasure" was built by the addiction itself.','Sleep tonight prunes the smoking synaptic pathway and consolidates new circuits. Every good night\'s sleep is active neurological renovation.','The insula is relearning: craving sensation ≠ must smoke. Each time you observe without acting, this rewrite happens at the cellular level.','If-then planning pre-engages the prefrontal cortex so it intercepts the habit loop before it fires. Make yours specific and vivid.'];
   document.getElementById('dailyInsight').textContent=ins[d%ins.length];
+  const quotes=['Every cigarette not smoked is rewiring happening in real time.','The trap only works while the illusion holds. You are seeing through it.','Discomfort is not danger. It is the sound of your brain changing.','You are not giving anything up. You are walking out of a trap.','Each craving that passes makes the next one quieter.','The urge is a passenger. You are the driver.','Freedom is not the absence of cravings. It is choosing not to obey them.','Every moment clean is a vote for the person you are becoming.','The cigarette never delivered what it promised. It only silenced what it caused.','Your brain is plastic. What you repeat, you become.'];
+  document.getElementById('rotatingQuote').textContent=quotes[d%quotes.length];
   cravingPage=0;
   renderCravingLog();
 }
@@ -555,6 +563,15 @@ function runBreath(p){document.getElementById('breathRing').textContent=bP[p%4];
 function stopTimer(){clearInterval(timerInt);clearTimeout(breathTO);document.getElementById('timerBlock').classList.remove('active');document.getElementById('urgeBtn').style.display=''}
 
 function logStamp(){const n=new Date();return{d:n.toLocaleDateString('en-GB',{day:'numeric',month:'short'}),t:n.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})};}
+
+function logSmokeQuick(){
+  const s=logStamp();
+  S.urgesLost++;
+  S.lastSmokedDate=new Date().toISOString();
+  S.smokedLog=(S.smokedLog||0)+1;
+  S.cravingLog.push({d:s.d,t:s.t,ok:false,reason:'logged outside app'});
+  save();refreshDash();
+}
 
 function cravingDefeated(){
   const s=logStamp();
@@ -646,24 +663,24 @@ function smokeConfirmed(){
 }
 
 const TECH={
-  box:{name:'🫧 Breathe',badge:'Let your body settle',
-    intro:'The relaxation you were looking for from cigarettes already lives in your own breath. You never needed nicotine for this. Box breathing activates your parasympathetic nervous system — returning you to a calm that was always yours to access.',
-    steps:['Sit or stand comfortably. Drop your shoulders. You are safe.','Exhale everything out through your mouth — let it all go.','Inhale slowly through your nose for a count of 4. Feel your chest open.','Hold gently for a count of 4. Notice the stillness.','Exhale through your mouth for a count of 4. Release completely.','Hold with empty lungs for a count of 4. Rest here.','Repeat 4–6 cycles. By cycle 3, most cravings have already dissolved — because they were never as powerful as they seemed.']},
-  urge:{name:'🌊 Watch it',badge:'Curiosity, not combat',
-    intro:'You don\'t need to fight this feeling — fighting gives it power. Instead, simply watch it. A craving watched with curiosity is a craving that has already lost its grip. Every time you observe without acting, you are literally rewriting the neural connection between this sensation and cigarettes.',
-    steps:['Rather than bracing against the craving, get curious about it. What does it actually feel like?','Notice where in your body it lives. Chest? Throat? Hands? Just observe — like a scientist, not a victim.','Give it a number, 1 to 10. Watch the number.','Now watch it change. It will shift — up, down, sideways — because it\'s not solid. It never was.','You\'re not in a battle. You\'re watching a feeling that has a beginning, middle, and end.','Notice the end arriving. It always does.','That\'s it. You watched it pass. Your brain just learned: this feeling doesn\'t require a cigarette.']},
-  reframe:{name:'💡 See it clearly',badge:'The truth about this moment',
-    intro:'The craving feels urgent because your brain was trained to treat it that way. But seen clearly, it\'s just a mild, temporary withdrawal signal — one that a non-smoker never experiences at all, because they never created it. Saying this out loud activates the rational cortex and loosens the feeling\'s grip almost immediately.',
-    steps:['Say this, out loud if you can: "This is my body adjusting. It is not a need."','Then: "A non-smoker never feels this. Cigarettes created this feeling — they cannot cure it."','If you know what triggered the craving, name the illusion: "I thought I needed this to relax — but nicotine created the tension. I was already calm before I started smoking."','Say something true and forward-looking: "Every time this passes, I become more free."','Close with this: "I\'m not giving anything up. I\'m walking out of a trap."','Let the statement settle. Notice what shifts.']},
+  box:{name:'🫧 Breathe',badge:'Make room for it',
+    intro:'The urge doesn\'t need to be pushed away — it needs space. This breathing isn\'t an escape from the craving; it\'s a way of breathing into it. Making room for a sensation is how it loses its grip. Your nervous system already knows how to settle — nicotine never taught it anything new.',
+    steps:['Sit or stand comfortably. Drop your shoulders. You don\'t need to fight anything right now.','Find where the craving lives in your body. Chest? Throat? Gut? Just locate it.','Breathe slowly into that exact spot. Not away from it — into it. Let the breath touch the sensation.','Hold gently for a count of 4. Notice the feeling doesn\'t grow — it just sits there.','Exhale slowly and completely. Feel the sensation stay — and also feel yourself still here, unmoved.','Repeat. Each breath says: I can hold this. It doesn\'t have to go away for me to be okay.','By the third or fourth cycle, most cravings have already softened — not because you escaped them, but because you stopped fighting them.']},
+  urge:{name:'🌊 Watch it',badge:'You are not the craving',
+    intro:'Think of your mind as a bus you\'re driving. Cravings are passengers — loud, insistent, sometimes alarming. But they are not the driver. You are. They can shout from the back seats. They cannot take the wheel unless you hand it over. Your job right now is simply to keep driving.',
+    steps:['Rather than bracing against the craving, get curious. What does it actually feel like? Describe it like a scientist.','Notice where in your body it lives. Chest? Throat? Hands? Give it a shape, a colour, a texture if you can.','Give it a number, 1 to 10. Now just watch the number — it will change on its own.','Notice the craving is making noise: "You need this. Now." Hear it. Then notice you\'re still driving.','You\'re not in a battle. You\'re watching a feeling that has a beginning, middle, and end. You\'ve seen it end before.','Notice the end arriving. It always does.','That\'s it. You watched it pass. The passengers are quieter now. You stayed in the driver\'s seat.']},
+  reframe:{name:'💡 See it clearly',badge:'Defuse the thought',
+    intro:'A craving isn\'t a command — it\'s a thought your mind is producing. The moment you see it as a thought rather than a truth, it loses authority. ACT calls this defusion: stepping back from the content of your mind and watching it from a little distance. Try it now.',
+    steps:['Notice the craving thought. Then say — out loud if you can — "I\'m having the thought that I need a cigarette."','Feel the difference. You\'re not saying you need one. You\'re observing that your mind is saying it.','Now try: "Thanks, mind. I hear you." Acknowledge it without obeying it. Your mind is doing its job — you can do yours.','Say this: "This is my body adjusting. It is not a need. A non-smoker never feels this — cigarettes created it."','Name the illusion if you can: "I thought I needed this to relax — but nicotine created the tension. I was already calm before I started smoking."','Close with something true: "I\'m not giving anything up. I\'m walking out of a trap."','Let the statement settle. Notice what shifts when you watch the thought instead of becoming it.']},
   cold:{name:'❄️ Reset',badge:'A clean break in the moment',
     intro:'Cold water creates an immediate physiological shift — triggering norepinephrine that clears the craving signal quickly and cleanly. Think of it as a full-body refresh: a pause that breaks the automatic loop before it can complete itself.',
     steps:['Go to a tap. Run it cold.','Hold your wrists under the cold water for 30 seconds. Feel yourself arrive in the present moment.','Or splash cold water on your face. Notice how completely your attention shifts.','Drink a large, slow glass of cold water. Let it be deliberate — this is a small act of care for yourself.','Stand still for a moment afterwards. The craving will have softened or passed entirely.','This works not because it distracts you — but because it gives your nervous system something real to respond to.']},
   move:{name:'🏃 Move',badge:'Your body\'s own feel-good',
     intro:'Your body can produce its own reward — endorphins, dopamine, serotonin — without any external substance at all. Two minutes of movement releases enough of these to shift your mood and dissolve the craving. This is not a substitute for cigarettes. This is what your natural reward system was designed to do.',
     steps:['Stand up right now. That\'s the first move.','Do something that raises your heart rate: 20 jumping jacks, 10 push-ups, a brisk walk up the stairs, running on the spot.','As you move, notice your breath and your body — not the craving.','By the time you stop, the craving will have peaked and be fading. They always do within 90 seconds.','Notice how you feel. This is your body\'s own chemistry — available any time, free forever.','Over time, your brain will begin to associate the craving cue with movement — and the old association will quietly dissolve.']},
-  impl:{name:'📌 Your plan',badge:'You already decided this',
-    intro:'You don\'t need to make a decision in this moment — you already made it. Implementation intentions work by settling the question in advance, so when the craving arrives, your response is already there. The decision has been made. All that\'s left is to follow through on what you already chose.',
-    steps:['Recall the plan you set in Setup: "When I feel a craving, I will immediately…"','If you haven\'t set one yet, make it now: pick one specific action — breathe, walk outside, cold water — and commit to it as your default.','The specificity is what makes it work. Vague intentions require willpower. Specific plans just require following a path you already laid.','Do that one thing right now.','Notice: you didn\'t have to decide anything. You just followed through. That\'s the whole point.','Each time you use your plan, the path deepens and the craving\'s pull on you weakens.']}
+  impl:{name:'📌 Your plan',badge:'Act from your values',
+    intro:'In ACT, action isn\'t about willpower — it\'s about choosing to move toward what matters, even when it\'s uncomfortable. You already know what matters. You wrote it down. This moment is an invitation to act from that — not from the craving.',
+    steps:['Ask yourself: "What would the person I want to be do right now?" Don\'t overthink it. You already know.','Recall your motivation — your real reason. Let it be present in this moment, not abstract.','Recall your plan from Setup: "When I feel a craving, I will immediately…" The decision is already made.','Do that one thing. Not because the craving has gone — it might still be there. But because your values are louder.','Notice: you didn\'t wait to feel ready. You acted anyway. That\'s committed action — the core of real change.','Each time you do this, you widen the gap between urge and action. That gap is your freedom.']}
 };
 
 function openTech(key){
